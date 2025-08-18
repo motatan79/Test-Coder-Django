@@ -8,6 +8,11 @@ class Pais(models.Model):
     
     def __str__(self):
         return self.nombre
+    
+    class Meta:
+        verbose_name = "país"
+        verbose_name_plural = "países"
+        ordering = ['nombre']
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
@@ -15,7 +20,7 @@ class Cliente(models.Model):
     nacimiento = models.DateField()
     edad = models.IntegerField()
     email = models.EmailField(null=True, blank=True)
-    pais_origen_id = models.ForeignKey(Pais, on_delete=models.SET_NULL, null=True, blank=True)
+    pais_origen_id = models.ForeignKey(Pais, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="País de origen")
     
     def __str__(self):
         return f"{self.apellido}, {self.nombre}" if self.apellido else self.nombre
