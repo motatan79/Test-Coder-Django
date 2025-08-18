@@ -27,5 +27,6 @@ urlpatterns = [
     # path("dado/", dado, name="lanzamiento_dado"),
     # path("app_name/", include("app_name.urls")),
     path("", include("core.urls")),
+    path("clientes/", include("cliente.urls")),
     # Aquí puedes agregar más rutas según sea necesario
 ]
