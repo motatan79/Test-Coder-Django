@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>TeLaArmo</title>
-    </head>
-    <body>
-        <h1>Clientes</h1>
-        <ul>
-            {% for cliente in clientes %}
-            <h2>Cliente</h2>
-            <li>{{ cliente.nombre }} {{ cliente.apellido }}</li>
-            {% endfor %}
-        </ul>
-        <button><a href="{% url 'core:index' %}">Ir a Alineaciones</a></button>
-    </body>
-</html>   
+{% extends "core/base.html" %}
+
+{% block title %}
+    Te La Armo
+{% endblock title %}
+{% block content %}
+    <h1>Alineaciones Calcio 2.1</h1>
+    <div>
+        <button><a href="{% url 'cliente:cliente_list' %}">Ir a Alineaciones</a></button>
+    </div>
+{% endblock content %}
