@@ -16,17 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from .views import saludo, saludo_personalizado, saludo_con_parametro, dado
+
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path("saludo/", saludo, name="saludo"),
-    # path("saludo_personalizado/", saludo_personalizado, name="saludo_personalizado"),
-    # path("nombre/<str:nombre>/", saludo_con_parametro, name="saludo_con_parametro"),
-    # path("dado/", dado, name="lanzamiento_dado"),
-    # path("app_name/", include("app_name.urls")),
-    path("", include("core.urls")),
-    path("clientes/", include("cliente.urls")),
+    path("", include(("core.urls", "core"))),
+    path("clientes/", include(("cliente.urls", "cliente"))),
     # Aquí puedes agregar más rutas según sea necesario
 ]

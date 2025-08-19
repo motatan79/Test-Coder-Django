@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcio 2.1</title>
-</head>
-<body>
+{% extends "core/base.html" %}
 
-    <h1>Alineaciones {{ nombre }}</h1>
-    <p>Bienvenido a la página de alineaciones del equipo de fútbol.</p> 
-    <p><a href="{% url 'cliente:index' %}">Ir a Clientes</a></p>
-    <p><a href="{% url 'admin:index' %}">Administración</a></p>
-</body>
+{% block title %}
+    Te La Armo
+{% endblock title %}
+
+{% block content %}
+    <h1>Alineaciones Calcio 2.1{{ nombre }}</h1>
+    <h2>Inicio</h2>
+    <p>Bienvenido a Te La Armo, te invitamos a la página de alineaciones del equipo de fútbol 8</p> 
+    <button><a href="{% url 'cliente:index' %}">Jugadores</a></button>
+    <button><a href="{% url 'admin:index' %}">Administración</a></button>
+{% endblock content %}
+
 <footer>
     <p>© 2025 Calcio 2.1. Todos los derechos reservados.</p>
 </footer>
-</html>

@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+            <h1>Jugadores Calcio 2.1</h1>
+        <table border="1">
+            <thead>
+                <th>Nombre</th>
+                <th>Apellido</th>
+            </head>
+            <tbody>
+                {% for jugador in clientes %}
+                <tr>
+                    <td>{{ jugador.nombre }}</td>
+                    <td>{{ jugador.apellido }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+        <div>
+            <button><a href="{% url 'cliente:index' %}">Volver al Inicio</a></button>
+        </div>
+        <div>
+            <button><a href="{% url 'admin:index' %}">Administración</a></button>
+        </div>
+{% endblock content %}
+
+<footer>
+    <p>© 2025 Calcio 2.1. Todos los derechos reservados.</p>
+</footer>   
