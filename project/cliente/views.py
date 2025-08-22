@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from . import models
 from . import forms
 
@@ -14,7 +14,12 @@ def cliente_list(request):
     return render(request, 'cliente/cliente_list.html', context)
 
 def cliente_create(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
+        form = forms.ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = form.save()
+            return redirect('cliente:cliente_list')
+    else: # request.method == 'GET':
         form = forms.ClienteForm()
-        return render(request, 'cliente/cliente_form.html', {'form': form})
- # Implementación de la creación de cliente
+    return render(request, 'cliente/cliente_create.html', {'form': form})
+    
