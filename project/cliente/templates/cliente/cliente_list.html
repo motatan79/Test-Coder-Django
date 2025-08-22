@@ -6,12 +6,14 @@
             <thead>
                 <th>Nombre</th>
                 <th>Apellido</th>
+                <th>Edad</th>
             </head>
             <tbody>
                 {% for jugador in clientes %}
                 <tr>
                     <td>{{ jugador.nombre }}</td>
                     <td>{{ jugador.apellido }}</td>
+                    <td>{{ jugador.edad }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
