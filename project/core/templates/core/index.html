@@ -1,16 +1,37 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block title %}
     Te La Armo
 {% endblock title %}
 
 {% block content %}
-    <h1> Alineaciones {{ nombre }}</h1>
-    <p>Bienvenido a Te La Armo, la web oficial de alineaciones de equipos de fútbol 8</p> 
+    <h1> Te La Armo</h1>
+    <p>Web oficial de alineaciones de equipos de fútbol 8. Mejor que GianGPT</p> 
     <button><a href="{% url 'cliente:index' %}">Jugadores</a></button>
     <button><a href="{% url 'admin:index' %}">Administración</a></button>
+
+    <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{%static 'core/img/photo.jpeg' %}" alt="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." /></div>
+                <div class="col-lg-5">
+                    <h1 class="font-weight-light">Calcio 2.1</h1>
+                    <p>Deportivo Ansiedad de la ciudad de Buenos Aires</p>
+                    <a class="btn btn-success" href="https://wa.me/549112345678" target="_blank">Whatsapp</a>
+                </div>
+            </div>
+            <!-- Call to Action-->
+            <div class="card text-white bg-secondary my-5 py-4 text-center">
+                <div class="card-body"><p class="text-white m-0">Deja de pelear por la alineación: aquí armas tu equipo como un crack!</p></div>
+            </div>
+            <!-- Content Row-->
+            <div class="row gx-4 gx-lg-5">
+                
+                {% include "core/card.html" with titulo="Card One" texto="texto" %}
+                {% include "core/card.html" with titulo="Card Two" texto="texto" %}
+            </div>
+        </div>
 {% endblock content %}
 
 <footer>
-    <p>© 2025 Calcio 2.1. Todos los derechos reservados.</p>
+    {% include "core/footer.html" %}
 </footer>
