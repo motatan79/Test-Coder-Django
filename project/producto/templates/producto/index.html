@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    <h1>Productos</h1>
+{% endblock title %}
+
+{% block content %}
+    <h1>Productos</h1>
+
+    <div class="d-grip gap-3">
+        <a href="{% url 'producto:productocategoria_list' %}">
+            <button class="btn btn-primary">
+                Categorias de Productos
+            </button>
+        </a>
+    </div>
+
+{% endblock content %}
