@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    <h1>Categoria de Productos</h1>
+{% endblock title %}
+
+{% block content %}
+    {% for producto in object_list %}
+    
+    <ul>
+        <li>{{ producto.id }} - {{ producto.nombre }}</li>
+    </ul>
+    
+    {% endfor %}    
+
+{% endblock content %}
