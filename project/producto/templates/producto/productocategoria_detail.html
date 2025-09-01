@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    Categoria de Productos
+{% endblock title %}
+
+{% block content %}
+    
+    <h1>Detalle de Categorias de Productos</h1>
+    <ul>
+        <li>{{ object.id }} </li>
+        <li>{{ object.nombre }} </li>
+        <li>{{ object.descripcion }} </li>
+    </ul>
+    
+  
+{% endblock content %}
