@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+            <h1>CATEGORIAS DE PRODUCTOS</h1>
+            <h2> CREAR Jugador</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Guardar</button>
+            </form>
+
+        <div>
+            <button><a href="{% url 'producto:index' %}">Volver al Inicio</a></button>
+        </div>
+        <div>
+            <button><a href="{% url 'admin:index' %}">Administración</a></button>
+        </div>
+{% endblock content %}
+
+<footer>
+    <p>© 2025 Calcio 2.1. Todos los derechos reservados.</p>
+</footer>   

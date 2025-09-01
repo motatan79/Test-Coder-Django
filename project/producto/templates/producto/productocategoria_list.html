@@ -1,14 +1,29 @@
 {% extends "core/base.html" %}
 
 {% block title %}
-    <h1>Categoria de Productos</h1>
+    Categoria de Productos
 {% endblock title %}
 
 {% block content %}
+    
+    <h1>Listado de Categorias de Productos</h1>
+
+    <div class="py-lg-4">
+        <form action="{% url 'producto:productocategoria_list' %}">
+            <input type="text" placeholder="Buscar...">
+        </form>
+        
+    </div>
+
+
     {% for producto in object_list %}
     
     <ul>
-        <li>{{ producto.id }} - {{ producto.nombre }}</li>
+        <li>{{ producto.nombre }}
+        <a href="{% url 'producto:productocategoria_detail' producto.id %}">Ver Detalle</a>
+        <a href="{% url 'producto:productocategoria_update' producto.id %}">Modificar</a>
+        <a href="{% url 'producto:productocategoria_delete' producto.id %}">Eliminar</a>
+        </li>
     </ul>
     
     {% endfor %}    

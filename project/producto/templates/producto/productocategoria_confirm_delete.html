@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    Eliminar Categoria de Productos
+{% endblock title %}
+
+{% block content %}
+    
+    <h1>Eliminar Categorias de Productos</h1>
+    <p class= "fs-5 fst-italic"> ¿Estás seguro de que deseas eliminar la categoria "{{ object.nombre }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-grip gap-3">
+            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+            <a href="{% url 'producto:productocategoria_list' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>  
+{% endblock content %}
