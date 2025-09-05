@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Te La Armo | Login
+{% endblock %}
+
+{% block content %}
+  <h1>Login</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="next" value="{% url 'core:index' %}">
+
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+{% endblock %}
