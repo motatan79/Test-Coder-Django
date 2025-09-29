@@ -1,7 +1,25 @@
 from django import forms
 from . import models 
 
+POSICIONES = [
+    ('Portero', 'Portero'),
+    ('Defensa', 'Defensa'),
+    ('Medio', 'Medio'),
+    ('Delantero', 'Delantero'),
+]
+
 class ClienteForm(forms.ModelForm):
+    posicion1 = forms.ChoiceField(choices=POSICIONES, required=False, label='Posición Principal')
+    posicion2 = forms.ChoiceField(choices=POSICIONES, required=False, label='Posición Secundaria')
+
+    def clean(self):
+        cleaned_data = super(ClienteForm, self).clean()
+        pos1 = cleaned_data.get('posicion1')
+        pos2 = cleaned_data.get('posicion2')
+        if pos1 and pos2 and pos1 == pos2:
+            self.add_error('posicion2', 'La posición secundaria debe ser diferente a la principal.')
+        return cleaned_data
+
     class Meta:
         model = models.Cliente
         fields = "__all__" # Puedes especificar los campos que deseas incluir
