@@ -17,7 +17,7 @@ class Pais(models.Model):
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField()
+    fecha_nacimiento = models.DateField(null=True, blank=True)
     edad = models.IntegerField()
     email = models.EmailField(null=True, blank=True)
     posicion1 = models.CharField(max_length=100, null=True, blank=True)

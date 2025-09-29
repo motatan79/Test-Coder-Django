@@ -1,30 +1,277 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-            <h1>Jugadores Calcio 2.1</h1>
-        <table border="1">
-            <thead>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Edad</th>
-            </head>
-            <tbody>
-                {% for jugador in clientes %}
-                <tr>
-                    <td>{{ jugador.nombre }}</td>
-                    <td>{{ jugador.apellido }}</td>
-                    <td>{{ jugador.edad }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            
-        </table>
-        <div>
-            <button><a href="{% url 'cliente:index' %}">Volver al Inicio</a></button>
+    {% if messages %}
+        <ul style="list-style:none; padding:0;">
+        {% for message in messages %}
+            <li style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; padding:10px; margin-bottom:10px; border-radius:6px;">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    <h1>Jugadores Calcio 2.1</h1>
+        <form method="post" action="" id="alineacion-form">
+            {% csrf_token %}
+            <table border="1">
+                <thead>
+                    <th></th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Edad</th>
+                    <th>Juegas Como</th>
+                    <th>Posición Secundaria</th>
+                </thead>
+                <tbody>
+                    {% for jugador in clientes %}
+                    <tr>
+                        <td><input type="checkbox" name="jugadores_seleccionados" value="{{ jugador.id }}" class="jugador-checkbox"></td>
+                        <td>{{ jugador.nombre }}</td>
+                        <td>{{ jugador.apellido }}</td>
+                        <td>{{ jugador.edad }}</td>
+                        <td>{{ jugador.posicion1 }}</td>
+                        <td>{{ jugador.posicion2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" id="crear-alineacion-btn" style="margin-top:16px;" disabled>Crear Alineación</button>
+        </form>
+
+    <h2>Agregar nuevo jugador</h2>
+    <form method="post" style="margin-bottom: 24px;">
+        {% csrf_token %}
+        <div style="margin-bottom: 8px;">
+            {{ form.nombre.label_tag }}<br>
+            {{ form.nombre }}
         </div>
-        <div>
-            <button><a href="{% url 'admin:index' %}">Administración</a></button>
+        <div style="margin-bottom: 8px;">
+            {{ form.apellido.label_tag }}<br>
+            {{ form.apellido }}
         </div>
+        <div style="margin-bottom: 8px;">
+            {{ form.edad.label_tag }}<br>
+            {{ form.edad }}
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label for="id_posicion1">Juega Como</label><br>
+            {{ form.posicion1 }}
+        </div>
+        <div style="margin-bottom: 8px;">
+            {{ form.posicion2.label_tag }}<br>
+            {{ form.posicion2 }}
+        </div>
+            <button type="submit" class="alineacion-btn">Agregar jugador</button>
+    </form>
+    <div style="display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 220px;">
+            <h3>Jugadores seleccionados</h3>
+            <ul id="jugadores-seleccionados-list">
+                {% if jugadores_seleccionados %}
+                    {% for j in jugadores_seleccionados %}
+                        <li>{{ j.nombre }} {{ j.apellido }} ({{ j.posicion1 }}{{ j.posicion2|default_if_none:''|yesno:", " }}{{ j.posicion2 }})</li>
+                    {% endfor %}
+                {% else %}
+                    <li><em>Selecciona jugadores y presiona "Crear Alineación"</em></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div style="flex: 2; min-width: 320px;">
+            <h2>Visualización de cancha (alineación)</h2>
+            <div class="cancha-container">
+                <div class="cancha">
+                    <div class="linea-centro"></div>
+                    <div class="circulo-centro"></div>
+                    <div class="area area-izq"></div>
+                    <div class="area area-der"></div>
+                    <!-- Aquí se mostrarán los jugadores con JS/CSS según la alineación -->
+                </div>
+            </div>
+            {% if alineacion %}
+                <div style="background:#fff; color:#222; border-radius:8px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <h4>Resultado IA:</h4>
+                    <pre id="alineacion-ia" style="white-space:pre-wrap;">{{ alineacion }}</pre>
+                </div>
+                <script>
+                // Parse alineación IA y mostrar jugadores en la cancha
+                function parseAlineacion(text) {
+                    // Ejemplo de alineación IA:
+                    // Equipo 1:
+                    // Portero: Juan Pérez
+                    // Defensa: ...
+                    // Equipo 2:
+                    // ...
+                    const equipos = {};
+                    let equipoActual = null;
+                    let lines = text.split('\n');
+                    lines.forEach(line => {
+                        line = line.trim();
+                        if (line.match(/^Equipo/)) {
+                            equipoActual = line.replace(':','');
+                            equipos[equipoActual] = [];
+                        } else if (equipoActual && line) {
+                            // Ejemplo: "Portero: Juan Pérez"
+                            let parts = line.split(':');
+                            if (parts.length === 2) {
+                                equipos[equipoActual].push({posicion: parts[0].trim(), nombre: parts[1].trim()});
+                            }
+                        }
+                    });
+                    return equipos;
+                }
+
+                function posicionToCoords(posicion, equipo) {
+                    // Mapeo simple de posiciones a coordenadas (puedes mejorar según tu modelo)
+                    const mapa = {
+                        'Portero': {x: equipo === 'Equipo 1' ? 10 : 90, y: 50},
+                        'Defensa': {x: equipo === 'Equipo 1' ? 25 : 75, y: 30},
+                        'Defensa 2': {x: equipo === 'Equipo 1' ? 25 : 75, y: 70},
+                        'Mediocampo': {x: equipo === 'Equipo 1' ? 45 : 55, y: 30},
+                        'Mediocampo 2': {x: equipo === 'Equipo 1' ? 45 : 55, y: 70},
+                        'Delantero': {x: equipo === 'Equipo 1' ? 70 : 30, y: 50},
+                        // Puedes agregar más posiciones
+                    };
+                    return mapa[posicion] || {x: equipo === 'Equipo 1' ? 50 : 50, y: 50};
+                }
+
+                function mostrarJugadoresEnCancha(equipos) {
+                    const cancha = document.querySelector('.cancha');
+                    // Eliminar jugadores previos
+                    cancha.querySelectorAll('.jugador-cancha').forEach(e => e.remove());
+                    Object.entries(equipos).forEach(([equipo, jugadores]) => {
+                        jugadores.forEach(j => {
+                            const coords = posicionToCoords(j.posicion, equipo);
+                            const div = document.createElement('div');
+                            div.className = 'jugador-cancha';
+                            div.textContent = j.nombre;
+                            div.style.position = 'absolute';
+                            div.style.left = `calc(${coords.x}% - 24px)`;
+                            div.style.top = `calc(${coords.y}% - 24px)`;
+                            div.style.width = '48px';
+                            div.style.height = '48px';
+                            div.style.background = equipo === 'Equipo 1' ? '#3498db' : '#e74c3c';
+                            div.style.color = '#fff';
+                            div.style.borderRadius = '50%';
+                            div.style.display = 'flex';
+                            div.style.alignItems = 'center';
+                            div.style.justifyContent = 'center';
+                            div.style.fontSize = '12px';
+                            div.style.fontWeight = 'bold';
+                            div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+                            div.title = j.posicion;
+                            cancha.appendChild(div);
+                        });
+                    });
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const pre = document.getElementById('alineacion-ia');
+                    if (pre) {
+                        const equipos = parseAlineacion(pre.textContent);
+                        mostrarJugadoresEnCancha(equipos);
+                    }
+                });
+                </script>
+                <style>
+                .jugador-cancha {
+                    position: absolute;
+                    text-align: center;
+                    z-index: 2;
+                    transition: box-shadow 0.2s;
+                    cursor: pointer;
+                }
+                .jugador-cancha:hover {
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+                }
+                </style>
+            {% endif %}
+        </div>
+    </div>
+    <style>
+    .cancha-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 32px 0;
+    }
+    .cancha {
+        position: relative;
+        width: 90vw;
+        max-width: 600px;
+        height: 60vw;
+        max-height: 400px;
+        background: #228B22;
+        border: 4px solid #fff;
+        border-radius: 24px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    }
+    .linea-centro {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: #fff;
+        transform: translateX(-50%);
+    }
+    .circulo-centro {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 80px;
+        height: 80px;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .area {
+        position: absolute;
+        width: 80px;
+        height: 180px;
+        border: 3px solid #fff;
+        border-radius: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .area-izq {
+        left: 0;
+    }
+    .area-der {
+        right: 0;
+    }
+    @media (max-width: 600px) {
+        .cancha {
+            width: 98vw;
+            height: 70vw;
+        }
+    }
+    </style>
+    <script>
+    // Mostrar jugadores seleccionados en la lista y controlar el botón
+    const checkboxes = document.querySelectorAll('.jugador-checkbox');
+    const listaSeleccionados = document.getElementById('jugadores-seleccionados-list');
+    const btnAlineacion = document.getElementById('crear-alineacion-btn');
+    function actualizarSeleccionadosYBoton() {
+        listaSeleccionados.innerHTML = '';
+        let seleccionados = 0;
+        checkboxes.forEach(box => {
+            if (box.checked) {
+                seleccionados++;
+                const fila = box.parentElement.parentElement;
+                const nombre = fila.children[1].innerText;
+                const apellido = fila.children[2].innerText;
+                const li = document.createElement('li');
+                li.textContent = nombre + ' ' + apellido;
+                listaSeleccionados.appendChild(li);
+            }
+        });
+        btnAlineacion.disabled = seleccionados !== 16;
+        btnAlineacion.title = seleccionados !== 16 ? 'Selecciona exactamente 16 jugadores para crear la alineación' : '';
+    }
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', actualizarSeleccionadosYBoton);
+    });
+    // Inicializar estado al cargar
+    actualizarSeleccionadosYBoton();
+    </script>
 {% endblock content %}
 
 <footer>
