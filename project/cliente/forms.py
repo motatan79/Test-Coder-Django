@@ -37,3 +37,18 @@ class ClienteForm(forms.ModelForm):
         #     'email': 'Correo Electrónico',
         #     # 'telefono': 'Teléfono',
         # }
+
+
+class SeleccionJugadoresForm(forms.Form):
+    jugadores = forms.ModelMultipleChoiceField(
+        queryset=models.Cliente.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label="Selecciona 16 jugadores",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Cambiar choice_label para mostrar nombre + posiciones
+        self.fields['jugadores'].label_from_instance = lambda obj: f"{obj.nombre} {obj.apellido} ({obj.posicion1}/{obj.posicion2})"
+
+

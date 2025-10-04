@@ -1,106 +1,187 @@
-# Vista para formulario y resultado en HTML
-def alineacion_form(request):
-    alineacion = None
-    if request.method == 'POST':
-        jugadores = []
-        posiciones = []
-        for i in range(16):
-            nombre = request.POST.get(f'jugador{i}')
-            posicion = request.POST.get(f'posicion{i}')
-            if nombre and posicion:
-                jugadores.append(nombre)
-                posiciones.append(posicion)
-
-        prompt = f"Arma dos equipos de fútbol 8 con estos jugadores y posiciones: {list(zip(jugadores, posiciones))}. Devuelve la alineación para cada equipo de forma clara."
-        import openai, os
-        openai.api_key = os.getenv('OPENAI_API_KEY', 'TU_API_KEY_AQUI')
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=500,
-                temperature=0.7
-            )
-            content = response.choices[0].message.content
-            if content:
-                alineacion = content.strip()
-            else:
-                alineacion = "No se recibió respuesta de la IA."
-        except Exception as e:
-            alineacion = f"Error: {str(e)}"
-    return render(request, 'cliente/alineacion_form.html', {'alineacion': alineacion, 'rango': range(16)})
 from django.shortcuts import render, redirect
+from .forms import SeleccionJugadoresForm, ClienteForm
 from . import models
-from . import forms
+import random
 
-# Create your views here.
 def index(request):
     return render(request, 'cliente/index.html')
 
 def cliente_list(request):
-    from .forms import ClienteForm
-    from django.contrib import messages
-    import openai, os
     clientes = models.Cliente.objects.all()
-    form = ClienteForm()
     alineacion = None
     jugadores_seleccionados = []
-    if request.method == 'POST':
-        # Si el submit viene del formulario de alineación (checkboxes)
-        if 'jugadores_seleccionados' in request.POST:
-            ids = request.POST.getlist('jugadores_seleccionados')
-            jugadores_seleccionados = list(models.Cliente.objects.filter(id__in=ids))
-            # Construir prompt para IA
+
+    if request.method == "POST":
+        if "jugadores_seleccionados" in request.POST:
+            # Armar equipos
+            ids = request.POST.getlist("jugadores_seleccionados")
+            jugadores_seleccionados = models.Cliente.objects.filter(id__in=ids)
+
             jugadores_posiciones = [
-                f"{j.nombre} {j.apellido} ({j.posicion1 or ''}/{j.posicion2 or ''})" for j in jugadores_seleccionados
+                (f"{j.nombre} {j.apellido}", j.posicion1, j.posicion2)
+                for j in jugadores_seleccionados
             ]
-            prompt = (
-                "Eres un entrenador experto en fútbol 8. "
-                "Con los siguientes jugadores y sus posiciones principales/secundarias, arma dos equipos equilibrados. "
-                "Cada equipo debe tener: 1 portero, 3 defensas, 3 mediocampistas y 1 delantero. "
-                "Respeta las posiciones preferidas de cada jugador y distribúyelos para maximizar el rendimiento. "
-                "No repitas jugadores en la misma posición. "
-                "Si todas las posiciones principales (posición1) ya están ocupadas, asigna al jugador en su posición secundaria (posición2). "
-                "Devuelve la alineación de cada equipo en formato claro, indicando nombre y posición, y lista para visualizar en una cancha." 
-                f" Jugadores: {jugadores_posiciones}."
-            )
-            openai.api_key = os.getenv('OPENAI_API_KEY', 'TU_API_KEY_AQUI')
-            try:
-                response = openai.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}],
-                    max_tokens=500,
-                    temperature=0.7
-                )
-                content = response.choices[0].message.content
-                if content:
-                    alineacion = content.strip()
-                else:
-                    alineacion = "No se recibió respuesta de la IA."
-            except Exception as e:
-                alineacion = f"Error: {str(e)}"
+
+            equipoA, equipoB = armar_equipos(jugadores_posiciones)
+            alineacion = formatear_equipo(equipoA, "Equipo A") + "\n" + formatear_equipo(equipoB, "Equipo B")
+
+            # Mantener el formulario para agregar nuevos jugadores
+            form = ClienteForm()
         else:
-            # Formulario de agregar jugador
+            # Agregar nuevo jugador
             form = ClienteForm(request.POST)
             if form.is_valid():
                 form.save()
-                messages.success(request, '¡Jugador agregado exitosamente!')
-                return redirect('cliente:cliente_list')
-    context = {
-        'clientes': clientes,
-        'form': form,
-        'jugadores_seleccionados': jugadores_seleccionados,
-        'alineacion': alineacion,
-    }
-    return render(request, 'cliente/cliente_list.html', context)
+                return redirect("cliente:cliente_list")
+    else:
+        form = ClienteForm()
 
-def cliente_create(request):
-    if request.method == 'POST':
-        form = forms.ClienteForm(request.POST)
+    return render(request, "cliente/cliente_list.html", {
+        "clientes": clientes,
+        "form": form,
+        "alineacion": alineacion,
+        "jugadores_seleccionados": jugadores_seleccionados,
+    })
+# def cliente_list(request):
+#     if request.method == "POST":
+#         form = ClienteForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("cliente:cliente_list")
+#     else:
+#         form = ClienteForm()
+
+#     clientes = models.Cliente.objects.all()
+#     return render(request, "cliente/cliente_list.html", {
+#         "clientes": clientes,
+#         "form": form   # 👈 aquí mandamos el form
+#     })
+
+# def cliente_list(request):
+#     if request.method == "POST":
+#         # Si el formulario viene en POST, creamos el cliente
+#         nombre = request.POST.get("nombre")
+#         apellido = request.POST.get("apellido")
+#         posicion1 = request.POST.get("posicion1")
+#         posicion2 = request.POST.get("posicion2")
+
+#         if nombre and apellido and posicion1:
+#             models.Cliente.objects.create(
+#                 nombre=nombre,
+#                 apellido=apellido,
+#                 posicion1=posicion1,
+#                 posicion2=posicion2,
+#             )
+#         # 🔹 Redirige usando namespace correcto
+#         return redirect("cliente:cliente_list")
+
+#     clientes = models.Cliente.objects.all()
+#     return render(request, "cliente/cliente_list.html", {"clientes": clientes})
+
+# Función para armar los equipos
+def armar_equipos(jugadores_posiciones):
+    esquema = {"Portero": 1, "Defensa": 3, "Medio": 3, "Delantero": 1}
+    equipoA, equipoB = {k: [] for k in esquema}, {k: [] for k in esquema}
+
+    # Mezclamos los jugadores
+    random.shuffle(jugadores_posiciones)
+
+    # Lista de jugadores que todavía no fueron asignados
+    no_asignados = []
+
+    # Intento de asignar por posición
+    for i, jugador in enumerate(jugadores_posiciones):
+        nombre, pos1, pos2 = jugador
+        asignado = False
+
+        if i % 2 == 0:  # Equipo A
+            if len(equipoA[pos1]) < esquema[pos1]:
+                equipoA[pos1].append(f"{nombre} ({pos1})")
+                asignado = True
+            elif pos2 and len(equipoA[pos2]) < esquema[pos2]:
+                equipoA[pos2].append(f"{nombre} ({pos2})")
+                asignado = True
+        else:  # Equipo B
+            if len(equipoB[pos1]) < esquema[pos1]:
+                equipoB[pos1].append(f"{nombre} ({pos1})")
+                asignado = True
+            elif pos2 and len(equipoB[pos2]) < esquema[pos2]:
+                equipoB[pos2].append(f"{nombre} ({pos2})")
+                asignado = True
+
+        if not asignado:
+            no_asignados.append(jugador)
+
+    # Asignar los jugadores restantes sin importar posición hasta completar los equipos
+    equipos = [equipoA, equipoB]
+    for jugador in no_asignados:
+        nombre, pos1, pos2 = jugador
+        for equipo in equipos:
+            total_jugadores = sum(len(v) for v in equipo.values())
+            if total_jugadores < 8:
+                # Buscar la primera posición disponible
+                for pos in ["Portero", "Defensa", "Medio", "Delantero"]:
+                    if len(equipo[pos]) < esquema[pos]:
+                        equipo[pos].append(f"{nombre} ({pos})")
+                        break
+                break
+
+    return equipoA, equipoB
+
+# def armar_equipos(jugadores_posiciones):
+#     esquema = {"Portero": 1, "Defensa": 3, "Medio": 3, "Delantero": 1}
+#     equipoA, equipoB = {k: [] for k in esquema}, {k: [] for k in esquema}
+
+#     random.shuffle(jugadores_posiciones)
+
+#     def asignar(jugador, equipo):
+#         nombre, pos1, pos2 = jugador
+#         if len(equipo[pos1]) < esquema[pos1]:
+#             equipo[pos1].append(f"{nombre} ({pos1})")
+#             return True
+#         if len(equipo[pos2]) < esquema[pos2]:
+#             equipo[pos2].append(f"{nombre} ({pos2})")
+#             return True
+#         return False
+
+#     for i, jugador in enumerate(jugadores_posiciones):
+#         if i % 2 == 0:
+#             asignar(jugador, equipoA)
+#         else:
+#             asignar(jugador, equipoB)
+
+#     return equipoA, equipoB
+
+# Función para generar texto limpio de alineación
+def formatear_equipo(equipo, nombre_equipo):
+    texto = f"{nombre_equipo}:\n"
+    for rol in ["Portero", "Defensa", "Medio", "Delantero"]:
+        jugadores = ", ".join(equipo[rol])
+        texto += f"{rol}s: {jugadores}\n"
+    return texto
+
+# Vista principal del formulario de alineación
+def alineacion_form(request):
+    alineacion = None
+
+    if request.method == "POST":
+        form = SeleccionJugadoresForm(request.POST)
         if form.is_valid():
-            cliente = form.save()
-            return redirect('cliente:cliente_list')
-    else: # request.method == 'GET':
-        form = forms.ClienteForm()
-    return render(request, 'cliente/cliente_create.html', {'form': form})
-    
+            jugadores_seleccionados = form.cleaned_data["jugadores"]
+            jugadores_posiciones = [
+                (f"{j.nombre} {j.apellido}", j.posicion1, j.posicion2)
+                for j in jugadores_seleccionados
+            ]
+
+            equipoA, equipoB = armar_equipos(jugadores_posiciones)
+
+            # Generar texto final de alineación
+            alineacion = formatear_equipo(equipoA, "Equipo Azul") + "\n" + formatear_equipo(equipoB, "Equipo Rojo")
+
+    else:
+        form = SeleccionJugadoresForm()
+
+    return render(request, "cliente/alineacion_form.html", {
+        "form": form,
+        "alineacion": alineacion
+    })
