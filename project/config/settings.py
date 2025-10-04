@@ -34,6 +34,8 @@ from django.core.management.utils import get_random_secret_key
 SECRET_KEY = get_random_secret_key()
 
 # API Key de OpenAI (ejemplo de uso)
+HF_TOKEN = os.getenv("HF_TOKEN")
+
 OPENAI_API_KEY = env('OPENAI_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
