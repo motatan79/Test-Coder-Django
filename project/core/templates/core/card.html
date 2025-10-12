@@ -1,9 +1,21 @@
 <div class="col-md-4 mb-5">
-    <div class="card h-100">
-        <div class="card-body">
-            <h2 class="card-title">{{ titulo }}</h2>
-            <p class="card-text">{{ texto }}</p>
+    <div class="card h-100 shadow-sm" style="border-radius: 12px;">
+        <div class="card-body text-center">
+            <h2 class="card-title" 
+                style="font-size: 22px; font-weight: 600; color: #2c3e50; margin-bottom: 12px; border-bottom: 2px solid #3498db; display: inline-block; padding-bottom: 4px;">
+                {{ titulo }}
+            </h2>
+            <p class="card-text" 
+               style="font-size: 18px; color: #555; line-height: 1.6; margin-top: 12px;">
+               {{ texto }}
+            </p>
         </div>
-        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">Ver</a></div>
+        <div class="card-footer text-center" style="background: #f9f9f9; border-top: 1px solid #eee;">
+            <a class="btn btn-primary btn-sm" 
+               href="#!" 
+               style="border-radius: 6px; padding: 6px 16px; background-color: #3498db; border-color: #3498db;">
+               Ver
+            </a>
+        </div>
     </div>
 </div>
