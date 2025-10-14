@@ -41,7 +41,7 @@ OPENAI_API_KEY = env('OPENAI_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.134']
 
 
 # Application definition
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "core",
     "cliente",
     "producto",
+    "pwa",
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,19 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+PWA_APP_NAME = 'MiAppFutbol'
+PWA_APP_DESCRIPTION = "App de gestión de equipos de fútbol"
+PWA_APP_THEME_COLOR = '#0d6efd'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_START_URL = '/'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/core/img/photo.jpeg',
+        'sizes': '512x512'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'es-AR'
