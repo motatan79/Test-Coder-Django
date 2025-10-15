@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Generar Alineación</h2>
 
-<form method="post" action="{% url 'cliente:alineacion_form' %}">
+<form method="post" action="">
   {% csrf_token %}
   <ul style="list-style: none; padding: 0;">
     {% for jugador in form.jugadores.field.queryset %}

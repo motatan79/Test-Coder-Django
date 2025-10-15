@@ -1,3 +1,39 @@
-<footer class="py-2 bg-dark fixed-bottom">
-        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Te La Armo 2025</p></div>
+<footer class="footer-custom fixed-bottom">
+  <div class="container text-center text-white">
+    <p class="m-0">© Te La Armo 2025</p>
+  </div>
 </footer>
+
+<style>
+  /* Ajuste del contenido para que el footer no lo tape */
+  body {
+    padding-bottom: 45px; /* Altura del footer */
+  }
+
+  /* Footer base */
+  .footer-custom {
+    background-color: #111;
+    width: 100%;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030; /* sobre otros elementos */
+  }
+
+  /* Contenedor responsivo */
+  .footer-custom .container {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  /* Para pantallas pequeñas */
+  @media (max-width: 576px) {
+    .footer-custom {
+      font-size: 0.75rem;
+      padding: 4px 0;
+    }
+  }
+</style>
