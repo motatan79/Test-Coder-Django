@@ -23,7 +23,7 @@ def cliente_list(request):
             ]
 
             equipoA, equipoB = armar_equipos(jugadores_posiciones)
-            alineacion = formatear_equipo(equipoA, "Equipo A") + "\n" + formatear_equipo(equipoB, "Equipo B")
+            alineacion = formatear_equipo(equipoA, "Equipo Rojo") + "\n" + formatear_equipo(equipoB, "Equipo Azul")
 
             # Mantener el formulario para agregar nuevos jugadores
             form = ClienteForm()
@@ -154,7 +154,7 @@ def armar_equipos(jugadores_posiciones):
 
 # Función para generar texto limpio de alineación
 def formatear_equipo(equipo, nombre_equipo):
-    texto = f"{nombre_equipo}:\n"
+    texto = f"{nombre_equipo}\n"
     for rol in ["Portero", "Defensa", "Medio", "Delantero"]:
         jugadores = ", ".join(equipo[rol])
         texto += f"{rol}s: {jugadores}\n"

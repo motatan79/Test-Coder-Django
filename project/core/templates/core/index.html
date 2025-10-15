@@ -8,8 +8,15 @@
 {% block content %}
     <h1> Te La Armo</h1>
     <p>Web oficial de alineaciones de equipos de fútbol 8. Mejor que GianGPT</p> 
-    <button><a href="{% url 'cliente:index' %}">Jugadores</a></button>
-    <button><a href="{% url 'admin:index' %}">Administración</a></button>
+    <div class="d-flex justify-content-center gap-3 my-4">
+    <a href="{% url 'cliente:index' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+        Jugadores
+    </a>
+    <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-lg rounded-pill shadow-sm">
+        Administración
+    </a>
+    </div>
+
 
     <div class="row gx-4 gx-lg-5 align-items-center my-5">
                 <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{%static 'core/img/photo.jpeg' %}" alt="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." /></div>
@@ -24,10 +31,9 @@
                 <div class="card-body"><p class="text-white m-0">Deja de pelear por la alineación: aquí armas tu equipo como un crack!</p></div>
             </div>
             <!-- Content Row-->
-            <div class="row gx-4 gx-lg-5">
-                
-                {% include "core/card.html" with titulo="Card One" texto="texto" %}
-                {% include "core/card.html" with titulo="Card Two" texto="texto" %}
+            <div class="row gx-4 gx-lg-5 align-items-center justify-content-center">
+                {% include "core/card.html" with titulo="Bolso, chalecos y balones?" texto="David"%}
+                {% include "core/card.html" with titulo="Calcio FOOD" texto="Esta semana Victor ofrece Bollos de la Suegra y/o Sanguche de Pernil." %}
             </div>
         </div>
 {% endblock content %}
