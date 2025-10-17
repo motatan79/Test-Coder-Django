@@ -57,6 +57,16 @@
                 <ul id="jugadores-seleccionados-list"
                     style="background:#f9f9f9; border:1px solid #ccc; padding:10px; border-radius:6px; list-style:none; min-height:40px;">
                 </ul>
+                <!-- Selector de tipo de partido y botón debajo de la lista -->
+                <div style="margin-top:18px; display:flex; gap:16px; align-items:center;">
+                    <label for="tipo-partido" style="font-weight:bold;">Tipo de Partido:</label>
+                    <select name="tipo-partido" id="tipo-partido" style="padding:6px; border-radius:4px;">
+                        <option value="5">5 vs 5</option>
+                        <option value="8">8 vs 8</option>
+                        <option value="11">11 vs 11</option>
+                    </select>
+                    <button type="submit" form="alineacion-form" id="crear-alineacion-btn" class="btn-main" disabled>⚙️ Crear Alineación</button>
+                </div>
             </div>
             <!-- input oculto PARA enviar el tipo de partido junto con los jugadores -->
             <input type="hidden" name="tipo-partido" id="tipo-partido-hidden" value="8">
@@ -96,21 +106,6 @@
                     <button type="submit" class="btn-main">Agregar jugador</button>
                 </div>
             </form>
-
-            <!-- 🔸 NUEVO: Selector de tipo de partido + botón Crear Alineación -->
-            <div style="text-align:center; margin-top:48px;">
-                <label for="tipo-partido" style="display:block; font-weight:bold; margin-bottom:8px;">
-                    Tipo de partido:
-                </label>
-                <select id="tipo-partido" name="tipo-partido" style="padding:6px; border-radius:4px;">
-                    <option value="5">5 vs 5 (10 jugadores)</option>
-                    <option value="8" selected>8 vs 8 (16 jugadores)</option>
-                    <option value="11">11 vs 11 (22 jugadores)</option>
-                </select>
-
-                <button type="submit" form="alineacion-form" id="crear-alineacion-btn" class="btn-main" disabled
-                    style="margin-top:16px;">⚙️ Crear Alineación</button>
-            </div>
         </div>
     </div>
 </div>
