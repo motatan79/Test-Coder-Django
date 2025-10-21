@@ -89,26 +89,46 @@
             <h2 style="text-align:center; margin-bottom:16px;">➕ Agregar nuevo jugador</h2>
             <form method="post" style="display:flex; flex-direction:column; justify-content:space-between;">
                 {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div style="color:#b00020; margin-bottom:12px;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
                 <div>
                     <div style="margin-bottom:12px;">
                         {{ form.nombre.label_tag }}<br>
                         {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                        <div style="color:#b00020;">{{ form.nombre.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div style="margin-bottom:12px;">
                         {{ form.apellido.label_tag }}<br>
                         {{ form.apellido }}
+                        {% if form.apellido.errors %}
+                        <div style="color:#b00020;">{{ form.apellido.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div style="margin-bottom:12px;">
                         {{ form.edad.label_tag }}<br>
                         {{ form.edad }}
+                        {% if form.edad.errors %}
+                        <div style="color:#b00020;">{{ form.edad.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div style="margin-bottom:12px;">
                         {{ form.posicion1.label_tag }}<br>
                         {{ form.posicion1 }}
+                        {% if form.posicion1.errors %}
+                        <div style="color:#b00020;">{{ form.posicion1.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div style="margin-bottom:12px;">
                         {{ form.posicion2.label_tag }}<br>
                         {{ form.posicion2 }}
+                        {% if form.posicion2.errors %}
+                        <div style="color:#b00020;">{{ form.posicion2.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div style="text-align:center; margin-top:12px;">

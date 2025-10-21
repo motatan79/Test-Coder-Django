@@ -2,18 +2,18 @@
 {% load static %}
 
 {% block title %}
-    Te La Armo
+    TeLaArmo
 {% endblock title %}
 
 {% block content %}
-    <h1> Te La Armo</h1>
+    <h1> TeLaArmo</h1>
     <p>Web oficial de alineaciones de equipos de fútbol 8. Mejor que GianGPT</p> 
     <div class="d-flex justify-content-center gap-3 my-4">
-    <a href="{% url 'cliente:index' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-        Jugadores
+    <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+        Equipos
     </a>
     <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-lg rounded-pill shadow-sm">
-        Administración
+        Armar Alineación (CAMBIAR LINK)
     </a>
     </div>
 

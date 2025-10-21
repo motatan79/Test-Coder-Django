@@ -1,10 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import SeleccionJugadoresForm, ClienteForm
+from .forms import SeleccionJugadoresForm, ClienteForm, EquipoForm, PerfilForm
 from . import models
 import random
 from .forms import EquipoForm, PerfilForm
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
 
 def index(request):
     return render(request, 'cliente/index.html')
@@ -140,8 +144,18 @@ def cliente_list(request):
                 perfil = getattr(request.user, 'perfil', None)
                 if perfil and perfil.equipo:
                     nuevo.equipo = perfil.equipo
+                else:
+                    # Si el usuario no tiene perfil/equipo, asignar un equipo por defecto si existe
+                    try:
+                        nuevo.equipo = models.Equipo.objects.first()
+                    except Exception:
+                        nuevo.equipo = None
+                # nuevo.equipo debe existir (FK no nula); si no existe, form validation debería haber evitado esto
                 nuevo.save()
                 return redirect("cliente:cliente_list")
+            else:
+                # Si el formulario no es válido, dejamos que al final se renderice con los errores
+                pass
 
     else:
         form = ClienteForm()
@@ -161,21 +175,72 @@ def mi_equipo(request):
     return render(request, 'cliente/mi_equipo.html', {'equipo': equipo})
 
 
-@login_required
-def crear_equipo(request):
+def crear_equipo(request, equipo_id=None):
+    equipos = models.Equipo.objects.all().order_by('nombre')
+
+    # Si el usuario NO está autenticado → mostrar login/register
+    if not request.user.is_authenticated:
+        login_form = AuthenticationForm()
+        register_form = UserCreationForm()
+
+        if request.method == 'POST' and 'login' in request.POST:
+            login_form = AuthenticationForm(request, data=request.POST)
+            if login_form.is_valid():
+                user = login_form.get_user()
+                login(request, user)
+                return redirect('cliente:crear_equipo')
+
+        elif request.method == 'POST' and 'register' in request.POST:
+            register_form = UserCreationForm(request.POST)
+            if register_form.is_valid():
+                user = register_form.save()
+                login(request, user)
+                return redirect('cliente:crear_equipo')
+
+        return render(request, 'cliente/crear_equipo.html', {
+            'equipos': equipos,
+            'login_form': login_form,
+            'register_form': register_form,
+        })
+
+    # Usuario autenticado: crear o editar equipo
     perfil = getattr(request.user, 'perfil', None)
+
+    equipo_edit = None
+    if equipo_id:
+        equipo_edit = get_object_or_404(models.Equipo, id=equipo_id)
+        # Solo permitir editar si el equipo fue creado por este usuario
+        if equipo_edit.creador != request.user:
+            messages.error(request, "No tienes permiso para editar este equipo.")
+            return redirect('cliente:crear_equipo')
+
     if request.method == 'POST':
-        form = EquipoForm(request.POST)
+        form = EquipoForm(request.POST, instance=equipo_edit)
         if form.is_valid():
-            equipo = form.save()
+            equipo = form.save(commit=False)
+            equipo.creador = request.user
+            equipo.save()
+
             if perfil:
                 perfil.equipo = equipo
                 perfil.save()
-            messages.success(request, 'Equipo creado y asignado a tu perfil.')
-            return redirect('cliente:mi_equipo')
+
+            if equipo_edit:
+                messages.success(request, 'Equipo actualizado correctamente.')
+            else:
+                messages.success(request, 'Equipo creado y asignado a tu perfil.')
+
+            return redirect('cliente:crear_equipo')
     else:
-        form = EquipoForm()
-    return render(request, 'cliente/crear_equipo.html', {'form': form})
+        form = EquipoForm(instance=equipo_edit)
+
+    return render(request, 'cliente/crear_equipo.html', {
+        'equipos': equipos,
+        'form': form,
+        'equipo_edit': equipo_edit,
+    })
+
+
 
 # def cliente_list(request):
 #     if request.method == "POST":

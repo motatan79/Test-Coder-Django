@@ -8,5 +8,6 @@ urlpatterns = [
     path("cliente_list/", views.cliente_list, name="cliente_list"),
     path("alineacion_form/", views.alineacion_form, name="alineacion_form"),
     path("mi-equipo/", views.mi_equipo, name="mi_equipo"),
-    path("crear-equipo/", views.crear_equipo, name="crear_equipo"),
+    path('crear-equipo/', views.crear_equipo, name='crear_equipo'),
+    path('editar-equipo/<int:equipo_id>/', views.crear_equipo, name='editar_equipo'),
 ]

@@ -36,7 +36,8 @@ class ClienteForm(forms.ModelForm):
 
     class Meta:
         model = models.Cliente
-        fields = "__all__" # Puedes especificar los campos que deseas incluir
+        # Limitar a los campos que mostramos en el formulario de "Agregar jugador"
+        fields = ['nombre', 'apellido', 'edad', 'posicion1', 'posicion2']
         #fields = ['nombre', 'apellido', 'email', 'telefono'] # Ejemplo de campos específicos
         #Puedes personalizar los widgets y etiquetas de los campos si es necesario
         # widgets = {

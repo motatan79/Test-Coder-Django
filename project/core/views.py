@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.urls import reverse
 from django.contrib.auth.views import LoginView
@@ -28,8 +28,11 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            # Aquí podrías redirigir al usuario a la página de login o a otra página
-            return render(request, 'core/index.html', {})
+            # Redirigimos al índice (o podrías cambiar a la página de login)
+            return redirect('core:index')
+        else:
+            # Si el formulario no es válido, renderizar la página de registro con errores
+            return render(request, 'core/register.html', {"form": form})
     else:
         form = CustomUserCreationForm()
         return render(request, 'core/register.html', {"form": form})
