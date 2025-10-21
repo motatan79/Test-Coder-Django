@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Mi equipo</h2>
+{% if equipo %}
+  <p><strong>Nombre:</strong> {{ equipo.nombre }}</p>
+  <p><strong>País:</strong> {{ equipo.pais.nombre }}</p>
+{% else %}
+  <p>No tienes un equipo asignado.</p>
+  <p><a href="{% url 'cliente:crear_equipo' %}">Crear mi equipo</a></p>
+{% endif %}
+{% endblock %}

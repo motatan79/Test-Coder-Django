@@ -1,4 +1,18 @@
 from django import forms
+from .models import Equipo, Perfil
+
+
+class EquipoForm(forms.ModelForm):
+    class Meta:
+        model = Equipo
+        fields = ['nombre', 'pais']
+
+
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = Perfil
+        fields = ['equipo']
+from django import forms
 from . import models 
 
 POSICIONES = [
