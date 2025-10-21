@@ -1,12 +1,20 @@
-{% extends 'core/base.html' %}
-
+{% extends "core/base.html" %}
+{% load static %}
 {% block content %}
-<h2>Mi equipo</h2>
-{% if equipo %}
-  <p><strong>Nombre:</strong> {{ equipo.nombre }}</p>
-  <p><strong>País:</strong> {{ equipo.pais.nombre }}</p>
-{% else %}
-  <p>No tienes un equipo asignado.</p>
-  <p><a href="{% url 'cliente:crear_equipo' %}">Crear mi equipo</a></p>
-{% endif %}
+  <div class="container my-5">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if equipo %}
+      <h2>Mi Equipo</h2>
+      <p><strong>Nombre:</strong> {{ equipo.nombre }}</p>
+      <p><strong>País:</strong> {{ equipo.pais }}</p>
+    {% else %}
+      <p>No tienes un equipo asignado aún.</p>
+      <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary">Crear Equipo</a>
+    {% endif %}
+  </div>
 {% endblock %}

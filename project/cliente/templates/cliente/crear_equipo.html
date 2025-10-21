@@ -1,10 +1,69 @@
 {% extends 'core/base.html' %}
-
 {% block content %}
-<h2>Crear Equipo</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn-main">Crear equipo</button>
-</form>
+
+<div style="display:flex; gap:24px; align-items:flex-start;">
+
+  <!-- Lista de equipos -->
+  <div style="flex:1;">
+    <h2>Equipos existentes</h2>
+    {% if equipos %}
+      <ul style="list-style:none; padding:0;">
+        {% for equipo in equipos %}
+          <li style="padding:8px 0; border-bottom:1px solid #eee;">
+            <strong>{{ equipo.nombre }}</strong> — {{ equipo.pais }}
+            {% if user.is_authenticated and equipo.creador == user %}
+              <a href="{% url 'cliente:editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary ms-2">Editar</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay equipos creados aún.</p>
+    {% endif %}
+  </div>
+
+  <!-- Panel derecho -->
+  <div style="width:380px; background:#fff; padding:16px; border:1px solid #ddd; border-radius:8px;">
+    {% if not user.is_authenticated %}
+      <h2>Acceso</h2>
+      <h4>Iniciar Sesión</h4>
+      <form method="post">
+        {% csrf_token %}
+        {{ login_form.as_p }}
+        <button type="submit" name="login" class="btn btn-primary w-100 mt-2">Entrar</button>
+      </form>
+
+      <hr>
+      <h4>Registrarse</h4>
+      <form method="post">
+        {% csrf_token %}
+        {{ register_form.as_p }}
+        <button type="submit" name="register" class="btn btn-secondary w-100 mt-2">Registrarse</button>
+      </form>
+
+    {% else %}
+      <h2>
+        {% if equipo_edit %}
+          Editar equipo: <strong>{{ equipo_edit.nombre }}</strong>
+        {% else %}
+          Crear un nuevo equipo
+        {% endif %}
+      </h2>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="text-align:right; margin-top:12px;">
+          <button type="submit" class="btn btn-success">
+            {% if equipo_edit %}Actualizar{% else %}Guardar{% endif %}
+          </button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+
+</div>
+
 {% endblock %}
+
+
