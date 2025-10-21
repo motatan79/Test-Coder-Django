@@ -1,13 +1,28 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .forms import SeleccionJugadoresForm, ClienteForm
 from . import models
 import random
+from .forms import EquipoForm, PerfilForm
+from django.contrib import messages
 
 def index(request):
     return render(request, 'cliente/index.html')
 
+@login_required
 def cliente_list(request):
-    clientes = models.Cliente.objects.all()
+    # Determinar equipo del usuario a través de su perfil
+    perfil = getattr(request.user, 'perfil', None)
+    if perfil and perfil.equipo:
+        jugadores = models.Cliente.objects.filter(equipo=perfil.equipo)
+    else:
+        # si es staff, mostrar todos; si no, ninguno
+        if request.user.is_staff or request.user.is_superuser:
+            jugadores = models.Cliente.objects.all()
+        else:
+            jugadores = models.Cliente.objects.none()
+
+    clientes = jugadores
     alineacion = None
     jugadores_seleccionados = []
 
@@ -121,7 +136,11 @@ def cliente_list(request):
             # Caso: agregar nuevo jugador
             form = ClienteForm(request.POST)
             if form.is_valid():
-                form.save()
+                nuevo = form.save(commit=False)
+                perfil = getattr(request.user, 'perfil', None)
+                if perfil and perfil.equipo:
+                    nuevo.equipo = perfil.equipo
+                nuevo.save()
                 return redirect("cliente:cliente_list")
 
     else:
@@ -133,6 +152,30 @@ def cliente_list(request):
         "alineacion": alineacion,
         "jugadores_seleccionados": jugadores_seleccionados,
     })
+
+
+@login_required
+def mi_equipo(request):
+    perfil = getattr(request.user, 'perfil', None)
+    equipo = perfil.equipo if perfil else None
+    return render(request, 'cliente/mi_equipo.html', {'equipo': equipo})
+
+
+@login_required
+def crear_equipo(request):
+    perfil = getattr(request.user, 'perfil', None)
+    if request.method == 'POST':
+        form = EquipoForm(request.POST)
+        if form.is_valid():
+            equipo = form.save()
+            if perfil:
+                perfil.equipo = equipo
+                perfil.save()
+            messages.success(request, 'Equipo creado y asignado a tu perfil.')
+            return redirect('cliente:mi_equipo')
+    else:
+        form = EquipoForm()
+    return render(request, 'cliente/crear_equipo.html', {'form': form})
 
 # def cliente_list(request):
 #     if request.method == "POST":

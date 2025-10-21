@@ -149,3 +149,8 @@ PWA_APP_ICONS = [
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'es-AR'
+
+# URLs de autenticación
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/clientes/cliente_list/'
+LOGOUT_REDIRECT_URL = '/login/'
