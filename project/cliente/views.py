@@ -160,12 +160,25 @@ def cliente_list(request):
     else:
         form = ClienteForm()
 
+    # return render(request, "cliente/cliente_list.html", {
+    #     "clientes": clientes,
+    #     "form": form,
+    #     "alineacion": alineacion,
+    #     "jugadores_seleccionados": jugadores_seleccionados,
+    # })
+    # Obtener el equipo del usuario autenticado (si existe)
+    equipo_usuario = None
+    if request.user.is_authenticated:
+        equipo_usuario = models.Equipo.objects.filter(creador=request.user).first()
+
     return render(request, "cliente/cliente_list.html", {
         "clientes": clientes,
         "form": form,
         "alineacion": alineacion,
         "jugadores_seleccionados": jugadores_seleccionados,
+        "equipo": equipo_usuario,  # 👉 pasamos el equipo al template
     })
+
 
 
 @login_required

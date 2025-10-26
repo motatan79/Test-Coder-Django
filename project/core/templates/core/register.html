@@ -1,11 +1,8 @@
 {% extends 'core/base.html' %}
 
-{% block title %}
-    Te La Armo | Register
-{% endblock %}
-
 {% block content %}
-  <h1>Register</h1>
+  <h1>Crea el usuario, y te armo la alineación</h1>
+
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
