@@ -32,6 +32,31 @@ def cliente_list(request):
         11: {"Portero": 1, "Defensa": 4, "Medio": 3, "Delantero": 3},
     }
 
+    if request.method == "POST":
+        if "agregar_jugador" in request.POST:
+            # Formulario de agregar jugador
+            form = ClienteForm(request.POST)
+            if form.is_valid():
+                nuevo = form.save(commit=False)
+                perfil = getattr(request.user, 'perfil', None)
+                if perfil and perfil.equipo:
+                    nuevo.equipo = perfil.equipo
+                else:
+                    # Asignar primer equipo disponible si no hay perfil/equipo
+                    equipo_default = models.Equipo.objects.first()
+                    nuevo.equipo = equipo_default
+                nuevo.save()
+                messages.success(request, f"Jugador {nuevo.nombre} {nuevo.apellido} agregado correctamente.")
+                return redirect("cliente:cliente_list")
+            else:
+                # Mantener errores si hay
+                pass
+        elif "jugadores_seleccionados" in request.POST:
+            # Lógica de selección y alineación
+            ids = request.POST.getlist("jugadores_seleccionados")
+            jugadores_seleccionados = list(models.Cliente.objects.filter(id__in=ids))
+ 
+    
     if request.method == "POST" and "jugadores_seleccionados" in request.POST:
         ids = request.POST.getlist("jugadores_seleccionados")
         jugadores_seleccionados = list(models.Cliente.objects.filter(id__in=ids))
