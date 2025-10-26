@@ -6,36 +6,41 @@
 {% endblock title %}
 
 {% block content %}
-    <h1> TeLaArmo</h1>
-    <p>Web oficial de alineaciones de equipos de fútbol 8. Mejor que GianGPT</p> 
-    <div class="d-flex justify-content-center gap-3 my-4">
-    <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-        Equipos
-    </a>
-    <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-lg rounded-pill shadow-sm">
-        Armar Alineación (CAMBIAR LINK)
-    </a>
+<h1>TeLaArmo</h1>
+<p>Registraste, crea tu equipo y te armo la alineación. Mejor que GianGPT</p>
+
+<div class="d-flex justify-content-center align-items-center my-3">
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+            Equipos Creados
+        </a>
     </div>
+</div>
 
+<!-- 🔹 Sección inferior (imagen + texto + cards) -->
+<div class="row gx-4 gx-lg-5 align-items-center mt-4">
+    <div class="col-lg-7">
+        <img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'core/img/photo.jpeg' %}" alt="Imagen" />
+    </div>
+    <div class="col-lg-5">
+        <h1 class="font-weight-light">Calcio 2.1</h1>
+        <p>Deportivo Ansiedad de la ciudad de Buenos Aires</p>
+        <a class="btn btn-success" href="https://wa.me/549112345678" target="_blank">Whatsapp</a>
+    </div>
+</div>
 
-    <div class="row gx-4 gx-lg-5 align-items-center my-5">
-                <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{%static 'core/img/photo.jpeg' %}" alt="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." /></div>
-                <div class="col-lg-5">
-                    <h1 class="font-weight-light">Calcio 2.1</h1>
-                    <p>Deportivo Ansiedad de la ciudad de Buenos Aires</p>
-                    <a class="btn btn-success" href="https://wa.me/549112345678" target="_blank">Whatsapp</a>
-                </div>
-            </div>
-            <!-- Call to Action-->
-            <div class="card text-white bg-secondary my-5 py-4 text-center">
-                <div class="card-body"><p class="text-white m-0">Deja de pelear por la alineación: aquí armas tu equipo como un crack!</p></div>
-            </div>
-            <!-- Content Row-->
-            <div class="row gx-4 gx-lg-5 align-items-center justify-content-center">
-                {% include "core/card.html" with titulo="Bolso, chalecos y balones?" texto="David"%}
-                {% include "core/card.html" with titulo="Calcio FOOD" texto="Esta semana Victor ofrece Bollos de la Suegra y/o Sanguche de Pernil." %}
-            </div>
-        </div>
+<div class="card text-white bg-secondary my-4 py-4 text-center">
+    <div class="card-body">
+        <p class="text-white m-0">
+            Deja de pelear por la alineación: ¡aquí armas tu equipo como un crack!
+        </p>
+    </div>
+</div>
+
+<div class="row gx-4 gx-lg-5 align-items-center justify-content-center mb-4">
+    {% include "core/card.html" with titulo="¿Bolso, chalecos y balones?" texto="David" %}
+    {% include "core/card.html" with titulo="Calcio FOOD" texto="Esta semana Victor ofrece Bollos de la Suegra y/o Sánguche de Pernil." %}
+</div>
 {% endblock content %}
 
 <footer>

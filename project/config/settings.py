@@ -153,4 +153,4 @@ PWA_APP_LANG = 'es-AR'
 # URLs de autenticación
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/clientes/cliente_list/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = 'core:index'

@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.urls import path, include
 
+admin_url = "/"  # Puedes cambiar esto para mayor seguridad
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(("core.urls", "core"))),

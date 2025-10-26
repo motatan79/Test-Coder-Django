@@ -7,3 +7,19 @@
 {% block content %}
     <h1 class="text-center">Cerraste sesión con éxito</h1>
 {% endblock content %}
+
+{% extends "core/base.html" %}
+
+{% block title %}
+    Te La Armo | Logout
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="height: 70vh;">
+    <h1 class="text-center text-success mb-3">Cerraste sesión con éxito 👋</h1>
+    <p class="text-center text-muted">Serás redirigido a la página principal en unos segundos...</p>
+
+    <!-- Redirección automática a index -->
+    <meta http-equiv="refresh" content="2; url={% url 'core:index' %}">
+</div>
+{% endblock content %}
