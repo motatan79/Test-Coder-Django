@@ -1,1 +1,57 @@
 .venv
+# Entorno virtual
+env/
+venv/
+ENV/
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de base de datos
+db.sqlite3
+*.sqlite3
+
+# Archivos de migraciones (opcional: si quieres subir solo código limpio)
+*/migrations/*.py
+*/migrations/*.pyc
+!*/migrations/__init__.py
+
+# Archivos de configuración locales
+*.env
+*.local
+*.secret
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de logs
+*.log
+
+# Carpeta de archivos estáticos recopilados (collectstatic)
+staticfiles/
+
+# Archivos de test, caché y cobertura
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node / frontend (si lo usas)
+node_modules/
+dist/
+build/
