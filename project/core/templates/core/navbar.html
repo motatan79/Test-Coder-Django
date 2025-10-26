@@ -17,10 +17,7 @@
                         </form>
                     </li>  
                     {% else %}
-                    <li class="nav-item"><a class="nav-link {% if '/login/' in request.path %} active {% endif %}" href="{% url 'core:login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link {% if '/register/' in request.path %} active {% endif %}" href="{% url 'core:register' %}">Registrar</a></li>
-
-                
+                            
                     {% endif %}
             </ul>
         </div>

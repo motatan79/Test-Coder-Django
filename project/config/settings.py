@@ -33,10 +33,6 @@ from django.core.management.utils import get_random_secret_key
 
 SECRET_KEY = get_random_secret_key()
 
-# API Key de OpenAI (ejemplo de uso)
-HF_TOKEN = os.getenv("HF_TOKEN")
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -56,6 +52,7 @@ INSTALLED_APPS = [
     "cliente",
     "producto",
     "pwa",
+    "axes",
 ]
 
 MIDDLEWARE = [
@@ -64,8 +61,14 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "axes.middleware.AxesMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 ROOT_URLCONF = "config.urls"
