@@ -5,7 +5,7 @@ from django.urls import path, include
 admin_url = "/"  # Puedes cambiar esto para mayor seguridad
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("tla-ctrl-982x-panel/", admin.site.urls),
     path("", include(("core.urls", "core"))),
     path("clientes/", include(("cliente.urls", "cliente"))),
     path("productos/", include(("producto.urls", "producto"))),

@@ -7,13 +7,28 @@
 
 {% block content %}
 <h1>TeLaArmo</h1>
-<p>Registrate, crea tu equipo y te armo la alineación. Mejor que GianGPT</p>
+<p>Webapp oficial de alineaciones de fútbol 5,8 y 11. Mejor que GianGPT</p>
 
 <div class="d-flex justify-content-center align-items-center my-3">
     <div class="d-flex justify-content-center gap-3">
         <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
             Equipos Creados
         </a>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'core:register' %}" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                Registrarse
+            </a>
+            <a href="{% url 'core:login' %}" class="btn btn-outline-success btn-lg rounded-pill shadow-sm">
+                Acceder
+            </a>
+        {% else %}
+            <form action="{% url 'core:logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow-sm">
+                    Cerrar sesión
+                </button>
+            </form>
+        {% endif %}
     </div>
 </div>
 
@@ -37,10 +52,6 @@
     </div>
 </div>
 
-<div class="row gx-4 gx-lg-5 align-items-center justify-content-center mb-4">
-    {% include "core/card.html" with titulo="¿Bolso, chalecos y balones?" texto="David" %}
-    {% include "core/card.html" with titulo="Calcio FOOD" texto="Esta semana Victor ofrece Bollos de la Suegra y/o Sánguche de Pernil." %}
-</div>
 {% endblock content %}
 
 <footer>
