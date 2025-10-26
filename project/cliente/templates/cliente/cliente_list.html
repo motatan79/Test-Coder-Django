@@ -283,9 +283,11 @@
     const listaSeleccionados = document.getElementById('jugadores-seleccionados-list');
     const checkboxes = document.querySelectorAll('.jugador-checkbox');
     const btnAlineacion = document.getElementById('crear-alineacion-btn');
-    const tipoPartido = document.getElementById('tipo-partido'); // NUEVO
+    const tipoPartido = document.getElementById('tipo-partido');
     const numSeleccionados = document.getElementById('num-seleccionados');
     const totalNecesarios = document.getElementById('total-necesarios');
+
+    const FORMACIONES_TOTALES = {5:10, 8:16, 11:22};
 
     function actualizarSeleccionadosYBoton() {
         listaSeleccionados.innerHTML = '';
@@ -302,32 +304,27 @@
             }
         });
 
-        // 🔸 NUEVO: calcular cantidad necesaria según tipo de partido
-        const necesarios = parseInt(tipoPartido.value) * 2;
+        const necesarios = FORMACIONES_TOTALES[parseInt(tipoPartido.value)] || 16;
         totalNecesarios.textContent = necesarios;
         numSeleccionados.textContent = seleccionados;
 
-        // Habilitar/deshabilitar botón según cantidad correcta
         btnAlineacion.disabled = seleccionados !== necesarios;
         btnAlineacion.title = btnAlineacion.disabled
             ? `Selecciona exactamente ${necesarios} jugadores para crear la alineación`
             : '';
 
-        // Ajuste de altura dinámico
+        // Ajuste dinámico de altura
         const alturaBase = 568;
         const extra = Math.max(0, listaSeleccionados.scrollHeight - 80);
         bloqueIzquierdo.style.height = (alturaBase + extra) + 'px';
+
+        // Sincronizar input oculto
+        document.getElementById('tipo-partido-hidden').value = tipoPartido.value;
     }
 
-    // Sincronizar selector con el input oculto del formulario principal
-    tipoPartido.addEventListener('change', () => {
-        document.getElementById('tipo-partido-hidden').value = tipoPartido.value;
-        actualizarSeleccionadosYBoton();
-    });
-
+    tipoPartido.addEventListener('change', actualizarSeleccionadosYBoton);
     checkboxes.forEach(cb => cb.addEventListener('change', actualizarSeleccionadosYBoton));
     actualizarSeleccionadosYBoton();
-
 </script>
 
 <footer>
