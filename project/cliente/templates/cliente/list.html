@@ -1,62 +1,41 @@
-{% block content %}
-<h1>TeLaArmo</h1>
-<p>Webapp oficial de alineaciones de equipos de fútbol. Mejor que GianGPT</p>
+{<div style="display: flex; gap: 32px; margin-top: 80px; flex-wrap: wrap; justify-content: center;">
 
-<!-- 🔹 Sección superior (botones + login) -->
-<div class="d-flex justify-content-between align-items-start my-3 flex-wrap">
-
-    <!-- 🔹 Izquierda: botones principales -->
-    <div class="d-flex justify-content-start gap-3">
-        <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-            Equipos
-        </a>
-        <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-lg rounded-pill shadow-sm">
-            Armar Alineación (CAMBIAR LINK)
-        </a>
-    </div>
-
-    <!-- 🔹 Derecha: login y registro -->
-    <div style="width:220px; background:#fff; padding:8px; border-radius:8px;">
-        {% if not user.is_authenticated %}
-        <form method="post" class="mb-2">
-            {% csrf_token %}
-            {{ login_form.as_p }}
-            <button type="submit" name="login" class="btn btn-primary w-100 mt-1">Entrar</button>
-        </form>
-
-        <!-- ❌ Quitamos el <hr> para eliminar la línea divisoria -->
-
-        <form method="post">
-            {% csrf_token %}
-            {{ register_form.as_p }}
-            <button type="submit" name="register" class="btn btn-secondary w-100 mt-1">Registrarse</button>
-        </form>
+    <!-- 🔹 Resultado IA -->
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+        <h3 style="text-align:center; margin-bottom:16px;">📋 Alineaciones</h3>
+        {% if alineacion %}
+        <div
+            style="background:#fff; color:#222; border-radius:8px; padding:16px; width:100%; box-shadow:0 2px 8px rgba(0,0,0,0.08); flex-grow:1;">
+            <pre id="alineacion-ia"
+                style="white-space:pre-wrap; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color:#222; margin:0;">
+                {{ alineacion|safe }}
+            </pre>
+        </div>
+        {% else %}
+        <div class="mx-auto my-3 p-3 text-center bg-white border rounded shadow-sm"
+            style="width:100%; line-height:1.5; flex-grow:1;">
+            <p class="text-muted mb-0">
+                <em>
+                    La alineación será generada una vez selecciones los jugadores<br>
+                    y presiones <strong>"Crear Alineación"</strong>.
+                </em>
+            </p>
+        </div>
         {% endif %}
     </div>
-</div>
 
-<!-- 🔹 Sección inferior (imagen + texto + cards) -->
-<div class="row gx-4 gx-lg-5 align-items-center mt-4"> <!-- 👈 antes era my-5 -->
-    <div class="col-lg-7">
-        <img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'core/img/photo.jpeg' %}" alt="Imagen" />
+    <!-- 🔹 Cancha -->
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+        <h3 style="text-align:center; margin-bottom:16px;">🏟 Visualización de cancha</h3>
+        <div class="cancha-container" style="width:100%; flex-grow:1; display:flex; justify-content:center;">
+            <div class="cancha" style="max-width:500px; width:100%;">
+                <div class="linea-centro"></div>
+                <div class="circulo-centro"></div>
+                <div class="area area-izq"></div>
+                <div class="area area-der"></div>
+                <div id="equipo-azul"></div>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-5">
-        <h1 class="font-weight-light">Calcio 2.1</h1>
-        <p>Deportivo Ansiedad de la ciudad de Buenos Aires</p>
-        <a class="btn btn-success" href="https://wa.me/549112345678" target="_blank">Whatsapp</a>
-    </div>
-</div>
 
-<div class="card text-white bg-secondary my-4 py-4 text-center"> <!-- 👈 antes era my-5 -->
-    <div class="card-body">
-        <p class="text-white m-0">
-            Deja de pelear por la alineación: ¡aquí armas tu equipo como un crack!
-        </p>
-    </div>
 </div>
-
-<div class="row gx-4 gx-lg-5 align-items-center justify-content-center mb-4">
-    {% include "core/card.html" with titulo="¿Bolso, chalecos y balones?" texto="David" %}
-    {% include "core/card.html" with titulo="Calcio FOOD" texto="Esta semana Victor ofrece Bollos de la Suegra y/o Sánguche de Pernil." %}
-</div>
-{% endblock content %}
