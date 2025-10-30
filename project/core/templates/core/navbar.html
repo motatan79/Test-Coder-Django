@@ -11,11 +11,10 @@
                 <li class="nav-item"><a class="nav-link {% if '/login/' in request.path %} active {% endif %}" href="{% url 'core:login' %}">Ingresa</a></li>
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link {% if '/clientes/' in request.path %} active {% endif %}" href="{% url 'cliente:crear_equipo' %}">Equipos</a></li>
-                    <li class="nav-item"><a class="nav-link text-bg-info">{{ user.username.capitalize }}</a></li>
                     <li class="nav-item">
                         <form action="{% url 'core:logout' %}" method="POST">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-dark">Logout</button>
+                            <button type="submit" class="btn btn-dark">Cerrar Sesión</button>
                         </form>
                     </li>  
                     {% else %}

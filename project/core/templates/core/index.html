@@ -19,12 +19,6 @@
                 Ingresa
             </a>
         {% else %}
-            <form action="{% url 'core:logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow-sm">
-                    Cerrar sesión
-                </button>
-            </form>
             <a href="{% url 'cliente:crear_equipo' %}" class="btn btn-success btn-lg rounded-pill shadow-sm">
                 Equipos
             </a>
@@ -52,7 +46,8 @@
 <div class="card text-white bg-secondary my-2 py-2 text-center">
     <div class="card-body">
         <p class="text-white m-0">
-            Deja de pelear por la alineación: ¡aquí armas tu equipo como un crack!
+            Deja de pelear por la alineación:<br>
+            ¡Aquí armas tu equipo como un <span class="fw-bold text-warning">CRACK</span>!
         </p>
     </div>
 </div>
