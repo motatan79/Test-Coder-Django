@@ -25,6 +25,63 @@
 </div>
 
 <div style="display:flex; flex-wrap:wrap; gap:32px; margin-top:32px;">
+    <!-- 🔹 BLOQUE DERECHO -->
+    <div style="flex: 1; min-width: 300px; display:flex; flex-direction:column; justify-content:flex-start; margin-bottom:32px;">
+        <div
+            style="background:#f9f9f9; padding:24px; border:1px solid #ddd; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:24px;">
+            <h2 style="text-align:center; margin-bottom:16px;">➕ Agregar nuevo jugador</h2>
+            <form method="post" style="display:flex; flex-direction:column; justify-content:space-between;">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div style="color:#b00020; margin-bottom:12px;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+                <div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.nombre.label_tag }}<br>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                        <div style="color:#b00020;">{{ form.nombre.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.apellido.label_tag }}<br>
+                        {{ form.apellido }}
+                        {% if form.apellido.errors %}
+                        <div style="color:#b00020;">{{ form.apellido.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.edad.label_tag }}<br>
+                        {{ form.edad }}
+                        {% if form.edad.errors %}
+                        <div style="color:#b00020;">{{ form.edad.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.posicion1.label_tag }}<br>
+                        {{ form.posicion1 }}
+                        {% if form.posicion1.errors %}
+                        <div style="color:#b00020;">{{ form.posicion1.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.posicion2.label_tag }}<br>
+                        {{ form.posicion2 }}
+                        {% if form.posicion2.errors %}
+                        <div style="color:#b00020;">{{ form.posicion2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:12px;">
+                    <button type="submit" name="agregar_jugador" value="1" class="btn-main">Agregar jugador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
     <!-- 🔹 BLOQUE IZQUIERDO -->
     <div id="bloque-izquierdo"
@@ -88,90 +145,49 @@
             <input type="hidden" name="tipo-partido" id="tipo-partido-hidden" value="8">
         </form>
     </div>
-
-    <!-- 🔹 BLOQUE DERECHO -->
-    <div style="flex: 1; min-width: 300px; display:flex; flex-direction:column; justify-content:flex-start; margin-bottom:32px;">
-        <div
-            style="background:#f9f9f9; padding:24px; border:1px solid #ddd; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:24px;">
-            <h2 style="text-align:center; margin-bottom:16px;">➕ Agregar nuevo jugador</h2>
-            <form method="post" style="display:flex; flex-direction:column; justify-content:space-between;">
-                {% csrf_token %}
-                {% if form.non_field_errors %}
-                <div style="color:#b00020; margin-bottom:12px;">
-                    {{ form.non_field_errors }}
-                </div>
-                {% endif %}
-                <div>
-                    <div style="margin-bottom:12px;">
-                        {{ form.nombre.label_tag }}<br>
-                        {{ form.nombre }}
-                        {% if form.nombre.errors %}
-                        <div style="color:#b00020;">{{ form.nombre.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div style="margin-bottom:12px;">
-                        {{ form.apellido.label_tag }}<br>
-                        {{ form.apellido }}
-                        {% if form.apellido.errors %}
-                        <div style="color:#b00020;">{{ form.apellido.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div style="margin-bottom:12px;">
-                        {{ form.edad.label_tag }}<br>
-                        {{ form.edad }}
-                        {% if form.edad.errors %}
-                        <div style="color:#b00020;">{{ form.edad.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div style="margin-bottom:12px;">
-                        {{ form.posicion1.label_tag }}<br>
-                        {{ form.posicion1 }}
-                        {% if form.posicion1.errors %}
-                        <div style="color:#b00020;">{{ form.posicion1.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div style="margin-bottom:12px;">
-                        {{ form.posicion2.label_tag }}<br>
-                        {{ form.posicion2 }}
-                        {% if form.posicion2.errors %}
-                        <div style="color:#b00020;">{{ form.posicion2.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div style="text-align:center; margin-top:12px;">
-                    <button type="submit" name="agregar_jugador" value="1" class="btn-main">Agregar jugador</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <!-- ================= RESULTADO Y CANCHA (INFERIOR) ================= -->
 <div style="display: flex; gap: 32px; margin-top: 80px; flex-wrap: wrap;">
 
     <!-- 🔹 Resultado IA -->
-    <div style="flex: 1; min-width: 650px;">
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
         <h3 style="text-align:center; margin-bottom:16px;">📋 Alineaciones</h3>
         {% if alineacion %}
+        <!-- 🏆 Cartel del tipo de partido -->
+        <div class="alert alert-success text-center w-100 mb-3 shadow-sm" role="alert"
+             style="font-size: 1.2rem; font-weight: 500;">
+            🏆 Este es tu partido: <strong>{{ tipo_partido }} vs {{ tipo_partido }}</strong>
+        </div>
         <div
             style="background:#fff; color:#222; border-radius:8px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
             <pre id="alineacion-ia" style="white-space:pre-wrap; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color:#222;">{{ alineacion|safe }}</pre>
         </div>
         {% else %}
-        <p><em>La alineación será generada una vez selecciones los jugadores y presiones "Crear Alineación".</em></p>
+        <div class="mx-auto my-3 p-3 text-center bg-white border rounded shadow-sm" style="max-width: 450px; line-height: 1.5;">
+            <p class="text-muted mb-0">
+                <em>
+                La alineación será generada una vez selecciones los jugadores<br>
+                 y presiones <strong>"Crear Alineación"</strong>.
+                </em>
+            </p>
+        </div>
         {% endif %}
     </div>
 
     <!-- 🔹 Cancha -->
-    <div style="flex: 2; min-width: 320px;">
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
         <h3 style="text-align:center; margin-bottom:16px;">🏟 Visualización de cancha</h3>
-        <div class="cancha-container">
-            <div class="cancha">
-                <div class="linea-centro"></div>
-                <div class="circulo-centro"></div>
-                <div class="area area-izq"></div>
-                <div class="area area-der"></div>
-                <div id="equipo-azul"></div>
+        <div id="cancha-jugadores">
+            <div class="cancha-container" style="width:100%; flex-grow:1; display:flex; justify-content:center;">
+                <div class="cancha">
+                    <div class="linea-centro"></div>
+                    <div class="circulo-centro"></div>
+                    <div class="area area-izq"></div>
+                    <div class="area area-der"></div>
+                    <div id="equipo-azul"></div>  
+                    <div id="equipo-rojo"></div>  
+                </div>
             </div>
         </div>
     </div>
@@ -279,56 +295,62 @@
 
 <!-- ================= SCRIPT CHECKBOX (ACTUALIZADO) ================= -->
 <script>
-    const bloqueIzquierdo = document.getElementById('bloque-izquierdo');
+document.addEventListener('DOMContentLoaded', function () {
+    const tipoSelect = document.getElementById('tipo-partido');
+    const tipoHidden = document.getElementById('tipo-partido-hidden');
+    const checkboxes = () => Array.from(document.querySelectorAll('.jugador-checkbox'));
     const listaSeleccionados = document.getElementById('jugadores-seleccionados-list');
-    const checkboxes = document.querySelectorAll('.jugador-checkbox');
     const btnAlineacion = document.getElementById('crear-alineacion-btn');
-    const tipoPartido = document.getElementById('tipo-partido'); // NUEVO
     const numSeleccionados = document.getElementById('num-seleccionados');
     const totalNecesarios = document.getElementById('total-necesarios');
+    const bloqueIzquierdo = document.getElementById('bloque-izquierdo');
 
-    function actualizarSeleccionadosYBoton() {
+    const FORMACIONES_TOTALES = {5: 10, 8: 16, 11: 22};
+
+    function actualizarUI() {
+        // recalcular seleccionados
+        const boxes = checkboxes();
+        let seleccionados = boxes.filter(cb => cb.checked).length;
+
+        // actualizar lista visible
         listaSeleccionados.innerHTML = '';
-        let seleccionados = 0;
-        checkboxes.forEach(box => {
-            if (box.checked) {
-                seleccionados++;
-                const fila = box.parentElement.parentElement;
-                const nombre = fila.children[1].innerText;
-                const apellido = fila.children[2].innerText;
-                const li = document.createElement('li');
-                li.textContent = nombre + ' ' + apellido;
-                listaSeleccionados.appendChild(li);
-            }
+        boxes.filter(cb => cb.checked).forEach(cb => {
+            const fila = cb.closest('tr');
+            if (!fila) return;
+            const nombre = fila.children[1]?.innerText || '';
+            const apellido = fila.children[2]?.innerText || '';
+            const li = document.createElement('li');
+            li.textContent = (nombre + ' ' + apellido).trim();
+            listaSeleccionados.appendChild(li);
         });
 
-        // 🔸 NUEVO: calcular cantidad necesaria según tipo de partido
-        const necesarios = parseInt(tipoPartido.value) * 2;
+        // calcular necesarios como total jugadores (2 equipos)
+        const tipo = parseInt(tipoSelect.value) || 8;
+        const necesarios = FORMACIONES_TOTALES[tipo] || (tipo * 2);
         totalNecesarios.textContent = necesarios;
         numSeleccionados.textContent = seleccionados;
 
-        // Habilitar/deshabilitar botón según cantidad correcta
-        btnAlineacion.disabled = seleccionados !== necesarios;
-        btnAlineacion.title = btnAlineacion.disabled
-            ? `Selecciona exactamente ${necesarios} jugadores para crear la alineación`
-            : '';
+        // habilitar botón sólo cuando coincidan
+        btnAlineacion.disabled = (seleccionados !== necesarios);
 
-        // Ajuste de altura dinámico
+        // sincronizar input oculto
+        tipoHidden.value = tipo;
+
+        // ajuste práctico de altura (opcional)
         const alturaBase = 568;
         const extra = Math.max(0, listaSeleccionados.scrollHeight - 80);
-        bloqueIzquierdo.style.height = (alturaBase + extra) + 'px';
+        if (bloqueIzquierdo) bloqueIzquierdo.style.height = (alturaBase + extra) + 'px';
     }
 
-    // Sincronizar selector con el input oculto del formulario principal
-    tipoPartido.addEventListener('change', () => {
-        document.getElementById('tipo-partido-hidden').value = tipoPartido.value;
-        actualizarSeleccionadosYBoton();
-    });
+    // añadir listeners
+    tipoSelect.addEventListener('change', actualizarUI);
+    checkboxes().forEach(cb => cb.addEventListener('change', actualizarUI));
 
-    checkboxes.forEach(cb => cb.addEventListener('change', actualizarSeleccionadosYBoton));
-    actualizarSeleccionadosYBoton();
-
+    // inicial
+    actualizarUI();
+});
 </script>
+
 
 <footer>
     <p>© 2025 TeLaArmo. Todos los derechos reservados.</p>

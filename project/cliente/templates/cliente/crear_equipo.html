@@ -1,52 +1,66 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-<div style="display:flex; gap:24px; align-items:flex-start;">
+<div class="container my-4">
+  <div class="row justify-content-center g-4">
+    <!-- Formulario de creación/edición de equipo -->
+    <div class="col-12 col-md-5 col-lg-4">
+      {% if user.is_authenticated %}
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h4 class="card-title text-center mb-3">
+              {% if equipo_edit %}
+                Editar equipo: <strong>{{ equipo_edit.nombre }}</strong>
+              {% else %}
+                Nuevo equipo
+              {% endif %}
+            </h4>
 
-  <!-- Lista de equipos -->
-  <div style="flex:1;">
-    <h2>Equipos existentes</h2>
-    {% if equipos %}
-      <ul style="list-style:none; padding:0;">
-        {% for equipo in equipos %}
-          <li style="padding:8px 0; border-bottom:1px solid #eee;">
-            <strong>{{ equipo.nombre }}</strong> — {{ equipo.pais }}
-            {% if user.is_authenticated and equipo.creador == user %}
-              <a href="{% url 'cliente:editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary ms-2">Editar</a>
-              <a href="{% url 'cliente:cliente_list' %}" class="btn btn-sm btn-outline-success ms-2">Jugadores</a>
-
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No hay equipos creados aún.</p>
-    {% endif %}
-  </div>
-
-  <!-- Panel derecho -->
-  <div style="width:380px; background:#fff; padding:16px; border:1px solid #ddd; border-radius:8px;">
-    {% if user.is_authenticated %}
-      <h2>
-        {% if equipo_edit %}
-          Editar equipo: <strong>{{ equipo_edit.nombre }}</strong>
-        {% else %}
-          Nuevo equipo
-        {% endif %}
-      </h2>
-
-      <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div style="text-align:right; margin-top:12px;">
-          <button type="submit" class="btn btn-success">
-            {% if equipo_edit %}Actualizar{% else %}Guardar{% endif %}
-          </button>
+            <form method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <div class="text-end mt-3">
+                <button type="submit" class="btn btn-success">
+                  {% if equipo_edit %}Actualizar{% else %}Guardar{% endif %}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    {% endif %}
+      {% else %}
+        <div class="alert alert-warning text-center">
+          Debes iniciar sesión para crear o editar equipos.
+        </div>
+      {% endif %}
+    </div>
+    <!-- Lista de equipos -->
+    <div class="col-12 col-md-7 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="card-title mb-3">Equipos registrados</h4>
+          {% if equipos %}
+            <ul class="list-group list-group-flush">
+              {% for equipo in equipos %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{ equipo.nombre }}</strong> — {{ equipo.pais }}
+                  </div>
+                  {% if user.is_authenticated and equipo.creador == user %}
+                    <div class="btn-group">
+                      <a href="{% url 'cliente:editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                      <a href="{% url 'cliente:cliente_list' %}" class="btn btn-sm btn-outline-success">Jugadores</a>
+                    </div>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No hay equipos creados aún.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
-
 </div>
 
 {% endblock %}

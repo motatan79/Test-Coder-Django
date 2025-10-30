@@ -15,53 +15,50 @@ def index(request):
 
 @login_required
 def cliente_list(request):
-    perfil = getattr(request.user, 'perfil', None)
+    # Obtener jugadores visibles para el usuario
+    perfil = getattr(request.user, "perfil", None)
     if perfil and perfil.equipo:
         jugadores = models.Cliente.objects.filter(equipo=perfil.equipo)
     else:
-        jugadores = models.Cliente.objects.all() if request.user.is_staff or request.user.is_superuser else models.Cliente.objects.none()
+        jugadores = models.Cliente.objects.all() if (request.user.is_staff or request.user.is_superuser) else models.Cliente.objects.none()
 
     clientes = jugadores
     alineacion = None
     jugadores_seleccionados = []
 
-    # Definir formaciones por tipo de partido
+    # Formaciones: cada valor es la cantidad POR EQUIPO
     FORMACIONES = {
         5: {"Portero": 1, "Defensa": 2, "Medio": 1, "Delantero": 1},
         8: {"Portero": 1, "Defensa": 3, "Medio": 3, "Delantero": 1},
         11: {"Portero": 1, "Defensa": 4, "Medio": 3, "Delantero": 3},
     }
 
-    if request.method == "POST":
-        if "agregar_jugador" in request.POST:
-            # Formulario de agregar jugador
-            form = ClienteForm(request.POST)
-            if form.is_valid():
-                nuevo = form.save(commit=False)
-                perfil = getattr(request.user, 'perfil', None)
-                if perfil and perfil.equipo:
-                    nuevo.equipo = perfil.equipo
-                else:
-                    # Asignar primer equipo disponible si no hay perfil/equipo
-                    equipo_default = models.Equipo.objects.first()
-                    nuevo.equipo = equipo_default
-                nuevo.save()
-                messages.success(request, f"Jugador {nuevo.nombre} {nuevo.apellido} agregado correctamente.")
-                return redirect("cliente:cliente_list")
+    # Manejo de creación de jugador (botón "Agregar jugador" debe enviar name="agregar_jugador")
+    if request.method == "POST" and "agregar_jugador" in request.POST:
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            nuevo = form.save(commit=False)
+            perfil = getattr(request.user, "perfil", None)
+            if perfil and perfil.equipo:
+                nuevo.equipo = perfil.equipo
             else:
-                # Mantener errores si hay
-                pass
-        elif "jugadores_seleccionados" in request.POST:
-            # Lógica de selección y alineación
-            ids = request.POST.getlist("jugadores_seleccionados")
-            jugadores_seleccionados = list(models.Cliente.objects.filter(id__in=ids))
- 
-    
+                nuevo.equipo = models.Equipo.objects.first()
+            nuevo.save()
+            messages.success(request, f"Jugador {nuevo.nombre} {nuevo.apellido} agregado correctamente.")
+            return redirect("cliente:cliente_list")
+        # si no es válido, seguimos para render con errores
+
+    # Lógica de crear alineación — el selector envía "tipo-partido" y los checkboxes name="jugadores_seleccionados"
     if request.method == "POST" and "jugadores_seleccionados" in request.POST:
         ids = request.POST.getlist("jugadores_seleccionados")
         jugadores_seleccionados = list(models.Cliente.objects.filter(id__in=ids))
 
-        tipo_partido = int(request.POST.get("tipo-partido", 8))
+        # tipo de partido (5,8,11)
+        try:
+            tipo_partido = int(request.POST.get("tipo-partido", 8))
+        except (ValueError, TypeError):
+            tipo_partido = 8
+
         distribucion = FORMACIONES.get(tipo_partido, FORMACIONES[8])
 
         # Agrupar jugadores por posición principal
@@ -70,48 +67,55 @@ def cliente_list(request):
             pos = j.posicion1 if j.posicion1 in por_posicion else "Medio"
             por_posicion[pos].append(j)
 
-        # Mezclar jugadores por posición
+        # Mezclar cada lista para aleatoriedad
         for lista in por_posicion.values():
             random.shuffle(lista)
 
         equipoA, equipoB = [], []
         usados_ids = set()
 
-        # Asignar jugadores por posición, balanceando entre A y B
-        for posicion, cantidad_total in distribucion.items():
-            cantidadA = cantidad_total // 2
-            cantidadB = cantidad_total - cantidadA
+        # CORRECCIÓN: distribucion está en cantidades POR EQUIPO.
+        # Para cada posición tomamos hasta `cantidad_por_equipo` para A y luego para B.
+        for posicion, cantidad_por_equipo in distribucion.items():
             jugadores_pos = [j for j in por_posicion[posicion] if j.id not in usados_ids]
 
-            asignadosA = jugadores_pos[:cantidadA]
-            asignadosB = jugadores_pos[cantidadA:cantidadA+cantidadB]
+            # asignados para A y B (si hay suficientes)
+            asignadosA = jugadores_pos[:cantidad_por_equipo]
+            asignadosB = jugadores_pos[cantidad_por_equipo:cantidad_por_equipo*2]
 
             equipoA += [(j, posicion) for j in asignadosA]
             equipoB += [(j, posicion) for j in asignadosB]
-
             usados_ids.update(j.id for j in asignadosA + asignadosB)
 
-        # Rellenar posiciones faltantes con jugadores no asignados
+        # Jugadores aún no usados — pool para rellenar faltantes
         no_asignados = [j for j in jugadores_seleccionados if j.id not in usados_ids]
         random.shuffle(no_asignados)
 
+        # Función que rellena las posiciones faltantes de UN equipo
         def rellenar(equipo):
+            # conteo actual por posición en ese equipo
             conteo = {pos: 0 for pos in distribucion}
             for j, pos_asignada in equipo:
-                conteo[pos_asignada] += 1
+                if pos_asignada in conteo:
+                    conteo[pos_asignada] += 1
+            # crear lista de faltantes (por posición) según distribucion POR EQUIPO
             faltantes = []
             for pos, req in distribucion.items():
-                faltantes.extend([pos] * (req - conteo[pos]))
+                faltantes.extend([pos] * max(0, req - conteo.get(pos, 0)))
+            # asignar desde no_asignados
             while faltantes and no_asignados:
                 pos = faltantes.pop(0)
                 j = no_asignados.pop(0)
                 equipo.append((j, pos))
                 usados_ids.add(j.id)
 
+        # rellenar ambos equipos
         rellenar(equipoA)
         rellenar(equipoB)
 
-        # Generar alineación final
+        # Si todavía faltan (escasez total de jugadores), tratar de completar con cualquier jugador restante (si existiera)
+        # — en ese caso equipos pueden quedar incompletos si realmente faltan jugadores.
+        # Generar texto final con la posición asignada
         alineacion = formatear_equipo(
             [(f"{j.nombre} {j.apellido}", pos, j.posicion2) for j, pos in equipoA],
             "Equipo Rojo"
@@ -122,22 +126,22 @@ def cliente_list(request):
         )
 
         form = ClienteForm()
-
     else:
         form = ClienteForm()
+        tipo_partido = 8  # valor por defecto para el template
 
     equipo_usuario = models.Equipo.objects.filter(creador=request.user).first() if request.user.is_authenticated else None
 
+    # pasar tambien tipo_partido al template para mostrar el cartel "N vs N"
     return render(request, "cliente/cliente_list.html", {
         "clientes": clientes,
         "form": form,
         "alineacion": alineacion,
         "jugadores_seleccionados": jugadores_seleccionados,
         "equipo": equipo_usuario,
+        "tipo_partido": tipo_partido,
     })
 
-
-# @login_required
 # def cliente_list(request):
 #     # Determinar equipo del usuario a través de su perfil
 #     perfil = getattr(request.user, 'perfil', None)
