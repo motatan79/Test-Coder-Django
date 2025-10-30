@@ -24,10 +24,20 @@
     </head>
     <body>
         {% include "core/navbar.html" %}
+        <!-- 🔹 Saludo visible solo si el usuario está autenticado -->
+        {% if user.is_authenticated %}
+        <div class="container mt-0">
+            <div class="d-flex justify-content-end">
+                <p class="text-success fw-semibold mb-0">
+                    👋 Hola, {{ user.username }}!
+                </p>
+            </div>
+        </div>
+        {% endif %}
         <!-- Page Content-->
         <div class="container px-4 px-lg-5">
             {% block content %}
-    
+            
             {% endblock content %}
             
             {% include "core/footer.html" %}
