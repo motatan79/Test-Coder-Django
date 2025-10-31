@@ -375,22 +375,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const contenedor = document.getElementById('alineacion-ia');
     let html = "";
 
-    function generarHtmlEquipo(nombreEquipo, alineacion) {
-        htmlEquipo = `<strong>${nombreEquipo}</strong><br>`;
+    function generarHtmlEquipo(nombreEquipo, alineacion, invertido = false) {
+        let htmlEquipo = `<strong>${nombreEquipo}</strong><br>`;
 
-        // Para cada posición, crear una "fila" centrada
-        const ordenPosiciones = ["Portero", "Defensa", "Medio", "Delantero"]; // para mantener el orden
+        // Mantiene el orden táctico
+        let ordenPosiciones = ["Portero", "Defensa", "Medio", "Delantero"];
+
+        // Si el equipo está invertido, se muestra de abajo hacia arriba
+        if (invertido) {
+            ordenPosiciones = ordenPosiciones.reverse();
+        }
         ordenPosiciones.forEach(pos => {
             const jugadores = alineacion[pos];
             if (jugadores.length > 0) {
-                htmlEquipo += `<div style="display:flex; justify-content:center; margin:4px 0;">`;
+                htmlEquipo += `
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        margin: 4px 0;
+                        ${invertido ? 'flex-direction: row-reverse;' : ''}
+                    ">
+                `;
+
                 jugadores.forEach(j => {
                     htmlEquipo += `
                         <div style="
                             display:flex;
                             flex-direction:column;
                             align-items:center;
-                            margin:0 12px;
+                            margin: 0 12px;
                             font-weight:bold;
                             font-size:14px;
                         ">
@@ -411,6 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     `;
                 });
+
                 htmlEquipo += `</div>`;
             }
         });
@@ -418,12 +432,15 @@ document.addEventListener("DOMContentLoaded", function () {
         return htmlEquipo;
     }
 
-    html += generarHtmlEquipo("Equipo Rojo", alineacionRoja);
+    // Equipo rojo normal (izquierda → derecha)
+    html += generarHtmlEquipo("Equipo Rojo", alineacionRoja, false);
     html += `<br>`;
-    html += generarHtmlEquipo("Equipo Azul", alineacionAzul);
+    // Equipo azul invertido (derecha → izquierda)
+    html += generarHtmlEquipo("Equipo Azul", alineacionAzul, true);
 
     contenedor.innerHTML = html;
 }
+
 
   mostrarAlineacionTexto();
 });
