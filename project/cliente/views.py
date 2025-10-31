@@ -116,12 +116,10 @@ def cliente_list(request):
         # — en ese caso equipos pueden quedar incompletos si realmente faltan jugadores.
         # Generar texto final con la posición asignada
         alineacion = formatear_equipo(
-            [(f"{j.nombre} {j.apellido}", pos, j.posicion2) for j, pos in equipoA],
-            "Equipo Rojo"
+            [(f"{j.nombre} {j.apellido}", pos, j.posicion2) for j, pos in equipoA]
         )
         alineacion += "\n" + formatear_equipo(
-            [(f"{j.nombre} {j.apellido}", pos, j.posicion2) for j, pos in equipoB],
-            "Equipo Azul"
+            [(f"{j.nombre} {j.apellido}", pos, j.posicion2) for j, pos in equipoB]
         )
         
         # 🔹 Extraer nombres para mostrar en cancha
@@ -270,7 +268,7 @@ def armar_equipos(jugadores_posiciones, tipo_partido=5):
 
     return equipoA, equipoB
 
-def formatear_equipo(equipo, nombre_equipo):
+def formatear_equipo(equipo, nombre_equipo=None):
     posiciones = {"Portero": [], "Defensa": [], "Medio": [], "Delantero": []}
 
     for jugador in equipo:
@@ -280,7 +278,7 @@ def formatear_equipo(equipo, nombre_equipo):
         else:
             posiciones["Medio"].append(f"{nombre}")
 
-    resultado = [f"\n{nombre_equipo}"]
+    resultado = []
     for pos, jugadores in posiciones.items():
         resultado.append(f"{pos}s: {', '.join(jugadores) if jugadores else '-'}")
     return "\n".join(resultado)
@@ -301,7 +299,7 @@ def alineacion_form(request):
             equipoA, equipoB = armar_equipos(jugadores_posiciones)
 
             # Generar texto final de alineación
-            alineacion = formatear_equipo(equipoA, "Equipo Azul") + "\n" + formatear_equipo(equipoB, "Equipo Rojo")
+            alineacion = formatear_equipo(equipoA) + "\n" + formatear_equipo(equipoB)
 
     else:
         form = SeleccionJugadoresForm()
