@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block content %}
 {% if messages %}
@@ -12,7 +13,7 @@
 {% endif %}
 
 <h1 style="text-align:center;">
-    ⚽ {% if equipo %}{{ equipo.nombre }}{% else %}Jugadores Calcio 2.1{% endif %}
+    ⚽ {% if equipo %}{{ equipo.nombre.upper}}{% else %}Jugadores Calcio 2.1{% endif %}
 </h1>
 
 <div style="text-align:center; margin-top:8px;">
@@ -96,25 +97,51 @@
 </div>
 
 <!-- ================= RESULTADO (SIN CANCHA) ================= -->
+<!-- ================= RESULTADO (CON FONDO DE CANCHA) ================= -->
 <div style="display: flex; justify-content: center; margin-top: 60px;">
-    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
-        <h3 style="text-align:center; margin-bottom:16px;">📋 Alineaciones</h3>
-        {% if alineacion %}
-        <div class="alert alert-success text-center w-100 mb-3 shadow-sm" role="alert" style="font-size: 1.2rem; font-weight: 500;">
-            🏆 Este es tu partido: <strong>{{ tipo_partido }} vs {{ tipo_partido }}</strong>
-        </div>
-        <div style="background:#fff; color:#222; border-radius:8px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-            <pre id="alineacion-ia" style="white-space:pre-wrap; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color:#222;">{{ alineacion|safe }}</pre>
-        </div>
-        {% else %}
-        <div class="mx-auto my-3 p-3 text-center bg-white border rounded shadow-sm" style="max-width: 450px; line-height: 1.5;">
-            <p class="text-muted mb-0">
-                <em>La alineación será generada una vez selecciones los jugadores<br>y presiones <strong>"Crear Alineación"</strong>.</em>
-            </p>
-        </div>
-        {% endif %}
+  <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+    <h3 style="text-align:center; margin-bottom:16px;">📋 Alineaciones</h3>
+
+    {% if alineacion %}
+    <div class="alert alert-success text-center w-100 mb-3 shadow-sm"
+         role="alert"
+         style="font-size: 1.2rem; font-weight: 500;">
+      🏆 Este es tu partido: <strong>{{ tipo_partido }} vs {{ tipo_partido }}</strong>
     </div>
+
+    <!-- 📍 Contenedor con imagen de fondo de cancha -->
+    <div style="
+        position: relative;
+        width: 380px;
+        height: 540px;
+        background-image: url('{% static "core/img/camp_nou.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        border: 2px solid #333;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        margin-top: 16px;">
+      
+      <!-- Aquí se dibujan dinámicamente los jugadores -->
+      <div id="alineacion-ia"
+           style="position: absolute; inset: 0; display: flex; flex-direction: column;
+                  justify-content: space-between; align-items: center; padding: 8px;">
+      </div>
+    </div>
+
+    {% else %}
+    <!-- 🕓 Mensaje cuando aún no hay alineación generada -->
+    <div class="mx-auto my-3 p-3 text-center bg-white border rounded shadow-sm"
+         style="max-width: 450px; line-height: 1.5;">
+      <p class="text-muted mb-0">
+        <em>La alineación será generada una vez selecciones los jugadores<br>
+        y presiones <strong>"Crear Alineación"</strong>.</em>
+      </p>
+    </div>
+    {% endif %}
+  </div>
 </div>
+
 
 <style>
 .btn-main {
@@ -176,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let html = "";
 
     function generarHtmlEquipo(nombreEquipo, alineacion, invertido = false) {
-      let htmlEquipo = `<strong>${nombreEquipo}</strong><br>`;
+      let htmlEquipo = "";
       let ordenPosiciones = ["Portero", "Defensa", "Medio", "Delantero"];
       if (invertido) ordenPosiciones.reverse();
 
@@ -186,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
           htmlEquipo += `<div style="display:flex; justify-content:center; margin:4px 0; ${invertido ? 'flex-direction:row-reverse;' : ''}">`;
           jugadores.forEach(j => {
             htmlEquipo += `
-              <div style="display:flex; flex-direction:column; align-items:center; margin:0 12px; font-weight:bold; font-size:14px;">
+              <div style="display:flex; flex-direction:column; align-items:center; margin:0 12px; font-weight:bold; font-size:11px; color:#f8f8f8; text-shadow:1px 1px 3px #000;">
                 <span>${j.nombre}</span>
                 <span style="display:inline-block; width:22px; height:22px; line-height:22px; text-align:center; border-radius:50%; background-color:${j.color}; color:#fff; font-weight:bold; font-size:12px; margin-top:2px;">${j.numero}</span>
               </div>`;
