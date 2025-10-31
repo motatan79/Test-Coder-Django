@@ -1,54 +1,428 @@
-function mostrarAlineacionTexto() {
+{% extends "core/base.html" %}
+
+{% block content %}
+{% if messages %}
+<ul style="list-style:none; padding:0;">
+    {% for message in messages %}
+    <li
+        style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; padding:10px; margin-bottom:10px; border-radius:6px;">
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1 style="text-align:center;">
+    ⚽ {% if equipo %}{{ equipo.nombre }}{% else %}Jugadores Calcio 2.1{% endif %}
+</h1>
+
+<div style="text-align:center; margin-top:8px;">
+    {% if user.is_authenticated %}
+    <a href="{% url 'cliente:mi_equipo' %}" style="margin-right:12px;">Mi equipo</a>
+    {% else %}
+    <a href="/login/">Iniciar sesión</a>
+    {% endif %}
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:32px; margin-top:32px;">
+    <!-- 🔹 BLOQUE DERECHO -->
+    <div style="flex: 1; min-width: 300px; display:flex; flex-direction:column; justify-content:flex-start; margin-bottom:32px;">
+        <div
+            style="background:#f9f9f9; padding:24px; border:1px solid #ddd; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:24px;">
+            <h2 style="text-align:center; margin-bottom:16px;">➕ Agregar nuevo jugador</h2>
+            <form method="post" style="display:flex; flex-direction:column; justify-content:space-between;">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div style="color:#b00020; margin-bottom:12px;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+                <div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.nombre.label_tag }}<br>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                        <div style="color:#b00020;">{{ form.nombre.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.apellido.label_tag }}<br>
+                        {{ form.apellido }}
+                        {% if form.apellido.errors %}
+                        <div style="color:#b00020;">{{ form.apellido.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.edad.label_tag }}<br>
+                        {{ form.edad }}
+                        {% if form.edad.errors %}
+                        <div style="color:#b00020;">{{ form.edad.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.posicion1.label_tag }}<br>
+                        {{ form.posicion1 }}
+                        {% if form.posicion1.errors %}
+                        <div style="color:#b00020;">{{ form.posicion1.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        {{ form.posicion2.label_tag }}<br>
+                        {{ form.posicion2 }}
+                        {% if form.posicion2.errors %}
+                        <div style="color:#b00020;">{{ form.posicion2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:12px;">
+                    <button type="submit" name="agregar_jugador" value="1" class="btn-main">Agregar jugador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- 🔹 BLOQUE IZQUIERDO -->
+    <div id="bloque-izquierdo"
+        style="flex: 2; min-width: 400px; min-height:568px; display:flex; flex-direction:column; background:#fff; border:1px solid #ddd; border-radius:8px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); transition: height 0.3s ease;">
+
+        <form method="post" action="" id="alineacion-form" style="display:flex; flex-direction:column; height:100%;">
+            {% csrf_token %}
+           
+            <div style="flex:1; overflow-y:auto;">
+                <table border="1" style="border-collapse:collapse; width:100%; margin-bottom:16px;">
+                    <thead style="background:#f4f4f4;">
+                        <tr>
+                            <th></th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Edad</th>
+                            <th>Juega Como</th>
+                            <th>Posición Secundaria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for jugador in clientes %}
+                        <tr>
+                            <td style="text-align:center;">
+                                <input type="checkbox" name="jugadores_seleccionados" value="{{ jugador.id }}"
+                                    class="jugador-checkbox">
+                            </td>
+                            <td>{{ jugador.nombre }}</td>
+                            <td>{{ jugador.apellido }}</td>
+                            <td>{{ jugador.edad }}</td>
+                            <td>{{ jugador.posicion1 }}</td>
+                            <td>{{ jugador.posicion2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- 🔸 NUEVO: CONTADOR DE JUGADORES -->
+                <div id="contador-jugadores"
+                    style="font-weight:bold; font-size:1.1em; margin-bottom:10px; text-align:right; color:#2c3e50;">
+                    🧮 Jugadores seleccionados: <span id="num-seleccionados">0</span> / <span id="total-necesarios">16</span>
+                </div>
+
+            <div id="jugadores-seccion" style="margin-top:16px;">
+                <h3>🧍‍♂️ Jugadores seleccionados</h3>
+                <ul id="jugadores-seleccionados-list"
+                    style="background:#f9f9f9; border:1px solid #ccc; padding:10px; border-radius:6px; list-style:none; min-height:40px;">
+                </ul>
+                <!-- Selector de tipo de partido y botón debajo de la lista -->
+                <div style="margin-top:18px; display:flex; gap:16px; align-items:center;">
+                    <label for="tipo-partido" style="font-weight:bold;">Tipo de Partido</label>
+                    <select name="tipo-partido" id="tipo-partido" style="padding:4px 6px; border-radius:4px; width:auto; min-width:80px;">
+                        <option value="5">5 vs 5</option>
+                        <option value="8">8 vs 8</option>
+                        <option value="11">11 vs 11</option>
+                    </select>
+                    <button type="submit" form="alineacion-form" id="crear-alineacion-btn" class="btn-main" disabled>⚙️ Crear Alineación</button>
+                </div>
+            </div>
+            <!-- input oculto PARA enviar el tipo de partido junto con los jugadores -->
+            <input type="hidden" name="tipo-partido" id="tipo-partido-hidden" value="8">
+        </form>
+    </div>
+</div>
+
+<!-- ================= RESULTADO Y CANCHA (INFERIOR) ================= -->
+<div style="display: flex; gap: 32px; margin-top: 80px; flex-wrap: wrap;">
+
+    <!-- 🔹 Resultado IA -->
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+        <h3 style="text-align:center; margin-bottom:16px;">📋 Alineaciones</h3>
+        {% if alineacion %}
+        <!-- 🏆 Cartel del tipo de partido -->
+        <div class="alert alert-success text-center w-100 mb-3 shadow-sm" role="alert"
+             style="font-size: 1.2rem; font-weight: 500;">
+            🏆 Este es tu partido: <strong>{{ tipo_partido }} vs {{ tipo_partido }}</strong>
+        </div>
+        <div
+            style="background:#fff; color:#222; border-radius:8px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <pre id="alineacion-ia" style="white-space:pre-wrap; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color:#222;">{{ alineacion|safe }}</pre>
+        </div>
+        {% else %}
+        <div class="mx-auto my-3 p-3 text-center bg-white border rounded shadow-sm" style="max-width: 450px; line-height: 1.5;">
+            <p class="text-muted mb-0">
+                <em>
+                La alineación será generada una vez selecciones los jugadores<br>
+                 y presiones <strong>"Crear Alineación"</strong>.
+                </em>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 🔹 Cancha -->
+    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+        <h3 style="text-align:center; margin-bottom:16px;">🏟 Visualización de cancha</h3>
+        <div id="cancha-jugadores">
+            <div class="cancha-container" style="width:100%; flex-grow:1; display:flex; justify-content:center;">
+                <div class="cancha">
+                    <div class="linea-centro"></div>
+                    <div class="circulo-centro"></div>
+                    <div class="area area-izq"></div>
+                    <div class="area area-der"></div>
+                    <div id="equipo-azul"></div>  
+                    <div id="equipo-rojo"></div>  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= ESTILOS ================= -->
+<style>
+    .jugador {
+    position: absolute;
+    background: rgba(0, 102, 204, 0.9); /* azul */
+    color: white;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    }
+    .btn-main {
+        background: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-main:disabled {
+        background: #aaa;
+        cursor: not-allowed;
+    }
+
+    .btn-main:hover:enabled {
+        background: #2980b9;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .cancha-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 32px 0;
+    }
+
+    .cancha {
+        position: relative;
+        width: 90vw;
+        max-width: 600px;
+        height: 60vw;
+        max-height: 400px;
+        background: #228B22;
+        border: 4px solid #fff;
+        border-radius: 24px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .linea-centro {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: #fff;
+        transform: translateX(-50%);
+    }
+
+    .circulo-centro {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 80px;
+        height: 80px;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .area {
+        position: absolute;
+        width: 80px;
+        height: 180px;
+        border: 3px solid #fff;
+        border-radius: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .area-izq {
+        left: 0;
+    }
+
+    .area-der {
+        right: 0;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const formaciones = {
+    5: { Portero: 1, Defensa: 2, Medio: 1, Delantero: 1 },
+    8: { Portero: 1, Defensa: 3, Medio: 3, Delantero: 1 },
+    11:{ Portero: 1, Defensa: 4, Medio: 3, Delantero: 3 },
+  };
+
+  const tipo = parseInt("{{ tipo_partido|default:5 }}") || 5;
+  const formacion = formaciones[tipo];
+
+  const equipoRojo = document.getElementById("equipo-rojo");
+  const equipoAzul = document.getElementById("equipo-azul");
+  equipoRojo.innerHTML = "";
+  equipoAzul.innerHTML = "";
+
+  const posiciones = {
+    5: { Portero:{y:[50]}, Defensa:{y:[40,60]}, Medio:{y:[50]}, Delantero:{y:[50]} },
+    8: { Portero:{y:[50]}, Defensa:{y:[35,50,65]}, Medio:{y:[35,50,65]}, Delantero:{y:[50]} },
+    11:{ Portero:{y:[50]}, Defensa:{y:[30,45,60,75]}, Medio:{y:[30,50,70]}, Delantero:{y:[25,50,75]} }
+  };
+
+  const alineacionRoja = { Portero:[], Defensa:[], Medio:[], Delantero:[] };
+  const alineacionAzul = { Portero:[], Defensa:[], Medio:[], Delantero:[] };
+
+  function crearJugador(x, y, color, numero, nombre, pos, equipo) {
+    const jugador = document.createElement("div");
+    jugador.className = "jugador";
+    jugador.style.left = x + "%";
+    jugador.style.top = y + "%";
+    jugador.style.transform = "translate(-50%, -50%)";
+    jugador.style.width = "30px";
+    jugador.style.height = "30px";
+    jugador.style.borderRadius = "50%";
+    jugador.style.backgroundColor = color;
+    jugador.style.border = "2px solid #fff";
+    jugador.style.display = "flex";
+    jugador.style.alignItems = "center";
+    jugador.style.justifyContent = "center";
+    jugador.style.color = "#fff";
+    jugador.style.fontWeight = "bold";
+    jugador.textContent = numero;
+
+    if(equipo === "rojo") alineacionRoja[pos].push({nombre:nombre, numero:numero, color:color});
+    else alineacionAzul[pos].push({nombre:nombre, numero:numero, color:color});
+
+    return jugador;
+  }
+
+  const offsetXRojo = {5:[10,25,30,40], 8:[10,25,40,47], 11:[8,18,28,40]}[tipo];
+  const jugadoresRojo = {{ equipoA_jugadores|safe }};
+  let idx = 0, numJugador = 1;
+
+  for(let pos in formacion){
+    const cant = formacion[pos];
+    const yVals = posiciones[tipo][pos].y.slice(0,cant);
+    yVals.forEach((y)=>{
+      const nombreJugador = jugadoresRojo[numJugador-1] || "Jugador "+numJugador;
+      const jugador = crearJugador(offsetXRojo[idx], y, "#e74c3c", numJugador, nombreJugador, pos, "rojo");
+      equipoRojo.appendChild(jugador);
+      numJugador++;
+    });
+    idx++;
+  }
+
+  const offsetXAzul = {5:[90,75,70,60], 8:[90,75,60,53], 11:[92,82,72,60]}[tipo];
+  const jugadoresAzul = {{ equipoB_jugadores|safe }};
+  idx = 0; numJugador = 1;
+
+  for(let pos in formacion){
+    const cant = formacion[pos];
+    const yVals = posiciones[tipo][pos].y.slice(0,cant);
+    yVals.forEach((y)=>{
+      const nombreJugador = jugadoresAzul[numJugador-1] || "Jugador "+numJugador;
+      const jugador = crearJugador(offsetXAzul[idx], y, "#3498db", numJugador, nombreJugador, pos, "azul");
+      equipoAzul.appendChild(jugador);
+      numJugador++;
+    });
+    idx++;
+  }
+
+  function mostrarAlineacionTexto() {
     const contenedor = document.getElementById('alineacion-ia');
     let html = "";
 
-    function generarHtmlEquipo(nombreEquipo, alineacion, invertidoVertical = false) {
+    function generarHtmlEquipo(nombreEquipo, alineacion, invertido = false) {
         let htmlEquipo = `<strong>${nombreEquipo}</strong><br>`;
 
-        // Orden táctico estándar
+        // Mantiene el orden táctico
         let ordenPosiciones = ["Portero", "Defensa", "Medio", "Delantero"];
 
         // Si el equipo está invertido, se muestra de abajo hacia arriba
-        if (invertidoVertical) {
+        if (invertido) {
             ordenPosiciones = ordenPosiciones.reverse();
         }
-
         ordenPosiciones.forEach(pos => {
             const jugadores = alineacion[pos];
-            if (jugadores && jugadores.length > 0) {
+            if (jugadores.length > 0) {
                 htmlEquipo += `
                     <div style="
                         display: flex;
                         justify-content: center;
-                        margin: 6px 0;
+                        margin: 4px 0;
+                        ${invertido ? 'flex-direction: row-reverse;' : ''}
                     ">
                 `;
 
                 jugadores.forEach(j => {
                     htmlEquipo += `
                         <div style="
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            margin: 0 10px;
-                            font-weight: bold;
-                            font-size: 14px;
+                            display:flex;
+                            flex-direction:column;
+                            align-items:center;
+                            margin: 0 12px;
+                            font-weight:bold;
+                            font-size:14px;
                         ">
+                            <span>${j.nombre}</span>
                             <span style="
-                                display: inline-block;
-                                width: 28px;
-                                height: 28px;
-                                line-height: 28px;
-                                text-align: center;
-                                border-radius: 50%;
-                                background-color: ${j.color};
-                                color: #fff;
-                                font-weight: bold;
-                                font-size: 13px;
-                                box-shadow: 0 0 2px rgba(0,0,0,0.4);
-                            ">
-                                ${j.numero}
-                            </span>
+                                display:inline-block;
+                                width:22px;
+                                height:22px;
+                                line-height:22px;
+                                text-align:center;
+                                border-radius:50%;
+                                background-color:${j.color};
+                                color:#fff;
+                                font-weight:bold;
+                                font-size:12px;
+                                margin-top:2px;
+                            ">${j.numero}</span>
                         </div>
                     `;
                 });
@@ -60,11 +434,91 @@ function mostrarAlineacionTexto() {
         return htmlEquipo;
     }
 
-    // Equipo rojo: parte superior (normal)
+    // Equipo rojo normal (izquierda → derecha)
     html += generarHtmlEquipo("Equipo Rojo", alineacionRoja, false);
-    html += `<br><hr style="border:1px solid #ccc;width:60%;margin:auto;"><br>`;
-    // Equipo azul: parte inferior (invertido verticalmente)
+    html += `<br>`;
+    // Equipo azul invertido (derecha → izquierda)
     html += generarHtmlEquipo("Equipo Azul", alineacionAzul, true);
 
     contenedor.innerHTML = html;
 }
+
+
+  mostrarAlineacionTexto();
+});
+</script>
+
+<!-- ================= SCRIPT CHECKBOX (ACTUALIZADO) ================= -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tipoSelect = document.getElementById('tipo-partido');
+    const tipoHidden = document.getElementById('tipo-partido-hidden');
+    const checkboxes = () => Array.from(document.querySelectorAll('.jugador-checkbox'));
+    const listaSeleccionados = document.getElementById('jugadores-seleccionados-list');
+    const btnAlineacion = document.getElementById('crear-alineacion-btn');
+    const numSeleccionados = document.getElementById('num-seleccionados');
+    const totalNecesarios = document.getElementById('total-necesarios');
+    const bloqueIzquierdo = document.getElementById('bloque-izquierdo');
+
+    const FORMACIONES_TOTALES = {5: 10, 8: 16, 11: 22};
+
+    function actualizarUI() {
+        // recalcular seleccionados
+        const boxes = checkboxes();
+        let seleccionados = boxes.filter(cb => cb.checked).length;
+
+        // actualizar lista visible
+        listaSeleccionados.innerHTML = '';
+        boxes.filter(cb => cb.checked).forEach(cb => {
+            const fila = cb.closest('tr');
+            if (!fila) return;
+            const nombre = fila.children[1]?.innerText || '';
+            const apellido = fila.children[2]?.innerText || '';
+            const li = document.createElement('li');
+            li.textContent = (nombre + ' ' + apellido).trim();
+            listaSeleccionados.appendChild(li);
+        });
+
+        // calcular necesarios como total jugadores (2 equipos)
+        const tipo = parseInt(tipoSelect.value) || 8;
+        const necesarios = FORMACIONES_TOTALES[tipo] || (tipo * 2);
+        totalNecesarios.textContent = necesarios;
+        numSeleccionados.textContent = seleccionados;
+
+        // habilitar botón sólo cuando coincidan
+        btnAlineacion.disabled = (seleccionados !== necesarios);
+
+        // sincronizar input oculto
+        tipoHidden.value = tipo;
+
+        // ajuste práctico de altura (opcional)
+        const alturaBase = 568;
+        const extra = Math.max(0, listaSeleccionados.scrollHeight - 80);
+        if (bloqueIzquierdo) bloqueIzquierdo.style.height = (alturaBase + extra) + 'px';
+    }
+
+    // añadir listeners
+    tipoSelect.addEventListener('change', actualizarUI);
+    checkboxes().forEach(cb => cb.addEventListener('change', actualizarUI));
+
+    // inicial
+    actualizarUI();
+});
+</script>
+
+
+<footer>
+    <p>© 2025 TeLaArmo. Todos los derechos reservados.</p>
+</footer>
+
+<style>
+    footer {
+        text-align: center;
+        padding: 12px 0;
+        background: #f4f4f4;
+        border-top: 1px solid #ddd;
+        margin-top: 48px;
+    }
+</style>
+
+{% endblock content %}
