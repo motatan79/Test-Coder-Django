@@ -176,17 +176,19 @@
     </div>
 
     <!-- 🔹 Cancha -->
-    <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
-        <h3 style="text-align:center; margin-bottom:16px;">🏟 Visualización de cancha</h3>
-        <div id="cancha-jugadores">
-            <div class="cancha-container" style="width:100%; flex-grow:1; display:flex; justify-content:center;">
-                <div class="cancha">
-                    <div class="linea-centro"></div>
-                    <div class="circulo-centro"></div>
-                    <div class="area area-izq"></div>
-                    <div class="area area-der"></div>
-                    <div id="equipo-azul"></div>  
-                    <div id="equipo-rojo"></div>  
+    <div class="cancha-wrapper">
+        <div style="flex: 1; min-width: 400px; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+            <h3 style="text-align:center; margin-bottom:16px;">🏟 Visualización de cancha</h3>
+            <div id="cancha-jugadores">
+                <div class="cancha-container" style="width:100%; flex-grow:1; display:flex; justify-content:center;">
+                    <div class="cancha">
+                        <div class="linea-centro"></div>
+                        <div class="circulo-centro"></div>
+                        <div class="area area-izq"></div>
+                        <div class="area area-der"></div>
+                        <div id="equipo-azul"></div>  
+                        <div id="equipo-rojo"></div>  
+                    </div>
                 </div>
             </div>
         </div>
@@ -195,9 +197,9 @@
 
 <!-- ================= ESTILOS ================= -->
 <style>
-    .jugador {
+.cancha-wrapper .jugador {
     position: absolute;
-    background: rgba(0, 102, 204, 0.9); /* azul */
+    background: rgba(0, 102, 204, 0.9);
     color: white;
     padding: 4px 6px;
     border-radius: 6px;
@@ -205,92 +207,184 @@
     text-align: center;
     transform: translate(-50%, -50%);
     white-space: nowrap;
-    }
-    .btn-main {
-        background: #3498db;
-        color: #fff;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
+}
 
-    .btn-main:disabled {
-        background: #aaa;
-        cursor: not-allowed;
-    }
+.cancha-wrapper .cancha-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 32px 0;
+}
 
-    .btn-main:hover:enabled {
-        background: #2980b9;
-    }
+.cancha-wrapper .cancha {
+    position: relative;
+    width: 90vw;
+    max-width: 600px;
+    height: 60vw;
+    max-height: 400px;
+    background: #228B22;
+    border: 4px solid #fff;
+    border-radius: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+}
 
-    input,
-    select {
-        width: 100%;
-        padding: 6px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+.cancha-wrapper .linea-centro {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: #fff;
+    transform: translateX(-50%);
+}
 
-    .cancha-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 32px 0;
-    }
+.cancha-wrapper .circulo-centro {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
 
-    .cancha {
-        position: relative;
-        width: 90vw;
-        max-width: 600px;
-        height: 60vw;
-        max-height: 400px;
-        background: #228B22;
-        border: 4px solid #fff;
-        border-radius: 24px;
-        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
-    }
+.cancha-wrapper .area {
+    position: absolute;
+    width: 80px;
+    height: 180px;
+    border: 3px solid #fff;
+    border-radius: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-    .linea-centro {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        width: 4px;
-        height: 100%;
-        background: #fff;
-        transform: translateX(-50%);
-    }
+.cancha-wrapper .area-izq {
+    left: 0;
+}
 
-    .circulo-centro {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 80px;
-        height: 80px;
-        border: 3px solid #fff;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .area {
-        position: absolute;
-        width: 80px;
-        height: 180px;
-        border: 3px solid #fff;
-        border-radius: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .area-izq {
-        left: 0;
-    }
-
-    .area-der {
-        right: 0;
-    }
+.cancha-wrapper .area-der {
+    right: 0;
+}
 </style>
+
+<style>
+/* ⚽ Estilos de los jugadores */
+.jugador {
+  position: absolute;
+  width: 22px;              /* tamaño mayor */
+  height: 22px;
+  border-radius: 40%;       /* bien redondeado */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  border: px solid white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.jugador:hover {
+  transform: scale(1.15);
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const formaciones = {
+    5: { Portero: 1, Defensa: 2, Medio: 1, Delantero: 1 },
+    8: { Portero: 1, Defensa: 3, Medio: 3, Delantero: 1 },
+    11: { Portero: 1, Defensa: 4, Medio: 3, Delantero: 3 },
+  };
+
+  const tipo = parseInt("{{ tipo_partido|default:5 }}") || 5;
+  const formacion = formaciones[tipo];
+
+  const equipoRojo = document.getElementById("equipo-rojo");
+  const equipoAzul = document.getElementById("equipo-azul");
+  equipoRojo.innerHTML = "";
+  equipoAzul.innerHTML = "";
+
+  // ========================
+  // 📍 Posiciones verticales
+  // ========================
+  const posiciones = {
+    5: {
+      Portero:  { y: [50] },
+      Defensa:  { y: [40, 60] },
+      Medio:    { y: [50] },
+      Delantero:{ y: [50] }   // alineado con portero
+    },
+    8: {
+      Portero:  { y: [50] },
+      Defensa:  { y: [35, 50, 65] },
+      Medio:    { y: [35, 50, 65] },
+      Delantero:{ y: [50] }   // alineado con portero
+    },
+    11: {
+      Portero:  { y: [50] },
+      Defensa:  { y: [30, 45, 60, 75] }, // centrados sin superponerse al arquero
+      Medio:    { y: [30, 50, 70] },
+      Delantero:{ y: [25, 50, 75] }
+    }
+  };
+
+  // ========================
+  // ⚽ Crear jugador
+  // ========================
+  function crearJugador(x, y, color, posName) {
+    const jugador = document.createElement("div");
+    jugador.className = "jugador";
+    jugador.style.background = color;
+    jugador.style.left = x + "%";
+    jugador.style.top = y + "%";
+    jugador.setAttribute("title", posName); // tooltip con nombre de posición
+    return jugador;
+  }
+
+// ========================
+// 🟥 Equipo ROJO (izquierda)
+// ========================
+const offsetXRojo = {
+  5: [10, 25, 40, 30],   // más adelantados hacia el medio
+  8: [10, 25, 40, 47],
+  11: [8, 18, 28, 40]
+}[tipo];
+
+let idx = 0;
+for (let pos in formacion) {
+  const cant = formacion[pos];
+  const yVals = posiciones[tipo][pos].y.slice(0, cant);
+  yVals.forEach((y) => {
+    const jugador = crearJugador(offsetXRojo[idx], y, "#e74c3c", pos);
+    equipoRojo.appendChild(jugador);
+  });
+  idx++;
+}
+
+// ========================
+// 🟦 Equipo AZUL (derecha)
+// ========================
+const offsetXAzul = {
+  5: [90, 75, 60, 70],   // espejo exacto del rojo
+  8: [90, 75, 60, 53],
+  11: [92, 82, 72, 60]
+}[tipo];
+
+idx = 0;
+for (let pos in formacion) {
+  const cant = formacion[pos];
+  const yVals = posiciones[tipo][pos].y.slice(0, cant);
+  yVals.forEach((y) => {
+    const jugador = crearJugador(offsetXAzul[idx], y, "#3498db", pos);
+    equipoAzul.appendChild(jugador);
+  });
+  idx++;
+}
+});
+
+</script>
 
 
 <!-- ================= SCRIPT CHECKBOX (ACTUALIZADO) ================= -->
