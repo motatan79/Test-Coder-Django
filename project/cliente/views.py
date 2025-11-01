@@ -47,6 +47,8 @@ def cliente_list(request):
             messages.success(request, f"Jugador {nuevo.nombre} {nuevo.apellido} agregado correctamente.")
             return redirect("cliente:cliente_list")
         # si no es válido, seguimos para render con errores
+        else: 
+            messages.error(request, "La posición secundaria debe ser diferente a la principal")
 
     # Lógica de crear alineación — el selector envía "tipo-partido" y los checkboxes name="jugadores_seleccionados"
     if request.method == "POST" and "jugadores_seleccionados" in request.POST:
