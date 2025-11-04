@@ -1,0 +1,11 @@
+Hola {{ user.username.upper }},
+
+¡Bienvenido a bordo!
+
+Gracias por registrarte en TeLaArmo.
+
+Por favor haz clic en el siguiente enlace para activar tu cuenta:
+
+http://{{ domain }}{% url 'core:activate' uidb64=uid token=token %}
+
+Si no fuiste tú quien creó esta cuenta, puedes ignorar este mensaje.
