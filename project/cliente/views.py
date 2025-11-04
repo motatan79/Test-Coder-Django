@@ -8,7 +8,13 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.conf import settings
 
 def index(request):
     return render(request, 'cliente/index.html')
@@ -310,3 +316,48 @@ def alineacion_form(request):
         "form": form,
         "alineacion": alineacion
     })
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False  # 🚫 El usuario no puede iniciar sesión aún
+            user.save()
+
+            # Crear token y enlace
+            current_site = get_current_site(request)
+            subject = 'Activa tu cuenta'
+            message = render_to_string('activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+            messages.info(request, 'Te hemos enviado un correo para activar tu cuenta. Revisa tu bandeja de entrada.')
+            return redirect('core:login')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'core:register.html', {'form': form})
+
+# 🔹 Vista que recibe el clic del email
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Tu cuenta ha sido activada correctamente. Ya puedes iniciar sesión.')
+        return redirect('login')
+    else:
+        messages.error(request, 'El enlace de activación no es válido o ha expirado.')
+        return redirect('register')
+

@@ -38,7 +38,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -138,7 +137,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-PWA_APP_NAME = 'MiAppFutbol'
+PWA_APP_NAME = 'TeLaArmo'
 PWA_APP_DESCRIPTION = "App de gestión de equipos de fútbol"
 PWA_APP_THEME_COLOR = '#0d6efd'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
@@ -158,3 +157,11 @@ PWA_APP_LANG = 'es-AR'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/clientes/cliente_list/'
 LOGOUT_REDIRECT_URL = 'core:index'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "telaarmo1@gmail.com"
+EMAIL_HOST_PASSWORD = "wzhb yglk mbwz mbhz"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
