@@ -14,6 +14,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm
 from django.conf import settings
+from django.contrib.auth.views import PasswordResetView
+from django.core.mail import EmailMultiAlternatives
+from django.urls import reverse_lazy
 
 # Create your views here.
 def index(request):
@@ -47,6 +50,34 @@ class CustomLoginView(LoginView):
 #     else:
 #         form = CustomUserCreationForm()
 #         return render(request, 'core/register.html', {"form": form})
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = "core/password_reset.html"
+    email_template_name = "core/password_reset_email.html"
+    html_email_template_name = "core/password_reset_email.html"
+    subject_template_name = "core/password_reset_subject.txt"
+    success_url = reverse_lazy("core:password_reset_done")
+
+    def send_mail(self, subject_template_name, email_template_name, context,
+                  from_email, to_email, html_email_template_name=None):
+        """
+        Enviamos un ÚNICO correo HTML, evitando el doble envío de Django.
+        """
+        subject = render_to_string(subject_template_name, context).strip()
+        html_content = render_to_string(self.html_email_template_name, context)
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body="Para ver este mensaje, abrilo en un cliente compatible con HTML.",
+            from_email=from_email,
+            to=[to_email],
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send(fail_silently=False)
+
+    # ⚠️ Este método anula el envío duplicado
+    def send_email(self, *args, **kwargs):
+        pass
 
 def register(request):
     if request.method == 'POST':

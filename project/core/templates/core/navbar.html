@@ -20,6 +20,10 @@
                     <li class="nav-item">
                         <a class="nav-link {% if '/login/' in request.path %} active {% endif %}" href="{% url 'core:login' %}">Ingresa</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/password_reset/' in request.path %} active {% endif %}" href="{% url 'core:password_reset' %}">¿Olvidaste tu contraseña?</a>
+                    </li>
+
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link {% if '/clientes/' in request.path %} active {% endif %}" href="{% url 'cliente:crear_equipo' %}">Equipos</a>
