@@ -12,7 +12,10 @@
 </ul>
 {% endif %}
 
-<h1 style="text-align:center;">
+<h1 style="text-align:center; display:flex; align-items:center; justify-content:center; gap:16px;">
+    {% if equipo and equipo.logo %}
+        <img src="{{ equipo.logo.url }}" alt="{{ equipo.nombre }}" style="width:60px; height:60px; object-fit:contain;">
+    {% endif %}
     ⚽ {% if equipo %}{{ equipo.nombre.upper}}{% else %}Jugadores Calcio 2.1{% endif %}
 </h1>
 

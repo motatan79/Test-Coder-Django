@@ -1,7 +1,6 @@
 from django.urls import path, include
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
+
 app_name = "cliente"
 
 urlpatterns = [
@@ -13,6 +12,3 @@ urlpatterns = [
     path('editar-equipo/<int:equipo_id>/', views.crear_equipo, name='editar_equipo'),
     path("", include(("core.urls", "core"), namespace="core")), 
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

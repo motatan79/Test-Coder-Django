@@ -203,7 +203,7 @@ def crear_equipo(request, equipo_id=None):
             return redirect('cliente:crear_equipo')
 
     if request.method == 'POST':
-        form = EquipoForm(request.POST, instance=equipo_edit)
+        form = EquipoForm(request.POST, request.FILES, instance=equipo_edit)
         if form.is_valid():
             equipo = form.save(commit=False)
             equipo.creador = request.user

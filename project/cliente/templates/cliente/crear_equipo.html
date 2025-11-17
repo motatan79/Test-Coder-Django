@@ -1,6 +1,74 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
+<style>
+  .equipo-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .equipo-logo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: #f0f0f0;
+    flex-shrink: 0;
+  }
+  
+  .equipo-logo-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  
+  .equipo-info {
+    padding: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .equipo-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  
+  .equipo-buttons a {
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  @media (max-width: 576px) {
+    .equipo-card { min-height: 260px; }
+    .row-equipos { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+  
+  @media (min-width: 577px) and (max-width: 768px) {
+    .equipo-card { min-height: 280px; }
+    .row-equipos { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  }
+  
+  @media (min-width: 769px) {
+    .equipo-card { min-height: 300px; }
+    .row-equipos { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  }
+</style>
+
 <div class="container my-4">
   <div class="row justify-content-center g-4">
     <!-- Formulario de creación/edición de equipo -->
@@ -16,7 +84,7 @@
               {% endif %}
             </h4>
 
-            <form method="post">
+            <form method="post", enctype="multipart/form-data"> 
               {% csrf_token %}
               {{ form.as_p }}
               <div class="text-end mt-3">
@@ -34,26 +102,36 @@
       {% endif %}
     </div>
     <!-- Lista de equipos -->
-    <div class="col-12 col-md-7 col-lg-6">
+    <div class="col-12 col-md-7 col-lg-8">
       <div class="card shadow-sm">
         <div class="card-body">
           <h4 class="card-title mb-3">Equipos registrados</h4>
           {% if equipos %}
-            <ul class="list-group list-group-flush">
+            <div class="row-equipos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
               {% for equipo in equipos %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>{{ equipo.nombre }}</strong> — {{ equipo.pais }}
-                  </div>
-                  {% if user.is_authenticated and equipo.creador == user %}
-                    <div class="btn-group">
-                      <a href="{% url 'cliente:editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                      <a href="{% url 'cliente:cliente_list' %}" class="btn btn-sm btn-outline-success">Jugadores</a>
+                <div class="equipo-card card">
+                  {% if equipo.logo %}
+                    <img src="{{ equipo.logo.url }}" alt="{{ equipo.nombre }}" class="equipo-logo">
+                  {% else %}
+                    <div class="equipo-logo-placeholder">
+                      <span>Sin logo</span>
                     </div>
                   {% endif %}
-                </li>
+                  <div class="equipo-info">
+                    <div>
+                      <h6 class="card-title mb-1" style="font-size: 14px; margin: 0;">{{ equipo.nombre }}</h6>
+                      <small class="text-muted d-block" style="font-size: 12px;">{{ equipo.pais }}</small>
+                    </div>
+                    {% if user.is_authenticated and equipo.creador == user %}
+                      <div class="equipo-buttons">
+                        <a href="{% url 'cliente:editar_equipo' equipo.id %}" class="btn btn-outline-primary btn-sm">Editar</a>
+                        <a href="{% url 'cliente:cliente_list' %}" class="btn btn-outline-success btn-sm">Jugadores</a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
               {% endfor %}
-            </ul>
+            </div>
           {% else %}
             <p class="text-muted">No hay equipos creados aún.</p>
           {% endif %}

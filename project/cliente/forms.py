@@ -5,8 +5,7 @@ from .models import Equipo, Perfil
 class EquipoForm(forms.ModelForm):
     class Meta:
         model = Equipo
-        fields = ['nombre', 'pais']
-
+        fields = ['nombre', 'pais', 'logo']
 
 class PerfilForm(forms.ModelForm):
     class Meta:
