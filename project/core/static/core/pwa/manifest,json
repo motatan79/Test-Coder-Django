@@ -1,0 +1,27 @@
+{
+  "name": "TeLaArmo - Alineaciones de Fútbol",
+  "short_name": "TeLaArmo",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#002e1b",
+  "theme_color": "#1fff9e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/pwa/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/pwa/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/static/pwa/icons/icon-1024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ]
+}

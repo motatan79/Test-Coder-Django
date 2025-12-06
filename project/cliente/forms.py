@@ -22,8 +22,8 @@ POSICIONES = [
 ]
 
 class ClienteForm(forms.ModelForm):
-    posicion1 = forms.ChoiceField(choices=POSICIONES, required=False, label='Posición Principal')
-    posicion2 = forms.ChoiceField(choices=POSICIONES, required=False, label='Posición Secundaria')
+    posicion1 = forms.ChoiceField(choices=POSICIONES, required=True, label='Posición Principal')
+    posicion2 = forms.ChoiceField(choices=POSICIONES, required=True, label='Posición Secundaria')
 
     def clean(self):
         cleaned_data = super(ClienteForm, self).clean()
@@ -36,7 +36,7 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
         # Limitar a los campos que mostramos en el formulario de "Agregar jugador"
-        fields = ['nombre', 'apellido', 'edad', 'posicion1', 'posicion2']
+        fields = ['nombre', 'apellido', 'apodo', 'edad', 'posicion1', 'posicion2']
         #fields = ['nombre', 'apellido', 'email', 'telefono'] # Ejemplo de campos específicos
         #Puedes personalizar los widgets y etiquetas de los campos si es necesario
         # widgets = {

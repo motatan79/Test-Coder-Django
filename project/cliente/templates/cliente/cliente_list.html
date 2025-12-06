@@ -29,27 +29,7 @@
 
 <div style="display:flex; flex-wrap:wrap; gap:32px; margin-top:32px;">
     <!-- 🔹 BLOQUE DERECHO -->
-    <div style="flex: 1; min-width: 300px; display:flex; flex-direction:column; justify-content:flex-start; margin-bottom:32px;">
-        <div style="background:#f9f9f9; padding:24px; border:1px solid #ddd; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:24px;">
-            <h2 style="text-align:center; margin-bottom:16px;">➕ Agregar nuevo jugador</h2>
-            <form method="post" style="display:flex; flex-direction:column; justify-content:space-between;">
-                {% csrf_token %}
-                {% if form.non_field_errors %}
-                <div style="color:#b00020; margin-bottom:12px;">{{ form.non_field_errors }}</div>
-                {% endif %}
-                <div>
-                    <div style="margin-bottom:12px;">{{ form.nombre.label_tag }}<br>{{ form.nombre }}</div>
-                    <div style="margin-bottom:12px;">{{ form.apellido.label_tag }}<br>{{ form.apellido }}</div>
-                    <div style="margin-bottom:12px;">{{ form.edad.label_tag }}<br>{{ form.edad }}</div>
-                    <div style="margin-bottom:12px;">{{ form.posicion1.label_tag }}<br>{{ form.posicion1 }}</div>
-                    <div style="margin-bottom:12px;">{{ form.posicion2.label_tag }}<br>{{ form.posicion2 }}</div>
-                </div>
-                <div style="text-align:center; margin-top:12px;">
-                    <button type="submit" name="agregar_jugador" value="1" class="btn-main">Agregar jugador</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    c
 
     <!-- 🔹 BLOQUE IZQUIERDO -->
     <div id="bloque-izquierdo" style="flex: 2; min-width: 400px; min-height:568px; display:flex; flex-direction:column; background:#fff; border:1px solid #ddd; border-radius:8px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); transition: height 0.3s ease;">
@@ -59,7 +39,7 @@
                 <table border="1" style="border-collapse:collapse; width:100%; margin-bottom:16px;">
                     <thead style="background:#f4f4f4;">
                         <tr>
-                            <th></th><th>Nombre</th><th>Apellido</th><th>Edad</th><th>Juega Como</th><th>Posición Secundaria</th>
+                            <th></th><th>Nombre</th><th>Apellido</th><th>Apodo</th><th>Juega Como</th><th>Posición Secundaria</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,7 +48,7 @@
                             <td style="text-align:center;"><input type="checkbox" name="jugadores_seleccionados" value="{{ jugador.id }}" class="jugador-checkbox"></td>
                             <td>{{ jugador.nombre }}</td>
                             <td>{{ jugador.apellido }}</td>
-                            <td>{{ jugador.edad }}</td>
+                            <td>{{ jugador.apodo }}</td>
                             <td>{{ jugador.posicion1 }}</td>
                             <td>{{ jugador.posicion2 }}</td>
                         </tr>

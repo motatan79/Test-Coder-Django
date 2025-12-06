@@ -28,6 +28,7 @@ class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     edad = models.IntegerField()
+    apodo = models.CharField(max_length=100, null=True, blank=True)
     posicion1 = models.CharField(max_length=50)
     posicion2 = models.CharField(max_length=50)
     equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='jugadores')

@@ -8,6 +8,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+                <!-- Manifest -->
+        <link rel="manifest" href="{% static 'core/pwa/manifest.json' %}">
+        <link rel="apple-touch-icon" href="{% static 'pwa/icons/icon-192.png' %}">
+        <meta name="theme-color" content="#1da352">
+        <!-- Service Worker -->
+        <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("{% static 'core/pwa/serviceworker.js' %}");
+        }
+        </script>
+        <!-- Tema de la app -->
+        <meta name="theme-color" content="#1fff9e">
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
@@ -16,7 +28,7 @@
         {% block title %}
            
         {% endblock %}    
-    </title>
+        </title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="{% static  'core/assets/favicon.ico' %}" />
         <!-- Core theme CSS (includes Bootstrap)-->
